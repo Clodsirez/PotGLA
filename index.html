@@ -9,104 +9,125 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         body {
-            padding: 2rem;
-            background-color: #f8f8f8;
+            padding: 2.5rem 1.5rem;
+            background-color: #0f111a;
+            color: #e2e8f0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         /* Título principal */
         .titulo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 2rem;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #a881ff;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
         }
 
         /* Botões das páginas */
         .nomes-superior {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .nome-box {
-            border: 2px solid #000;
-            padding: 0.5rem 1.5rem;
-            min-width: 100px;
+            border: 2px solid #2d2f44;
+            padding: 0.6rem 1.8rem;
+            min-width: 110px;
             text-align: center;
-            color: #60b8e0;
-            font-size: 1.1rem;
-            background-color: #fff;
+            color: #d0bfff;
+            font-size: 1.15rem;
+            font-weight: 500;
+            background-color: #1a1c2e;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
 
         .nome-box.ativo {
-            background-color: #e6f4ff;
-            border-width: 3px;
+            background-color: #5b21b6;
+            border-color: #7c3aed;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
         }
 
         .nome-box:hover {
-            background-color: #f0f8ff;
+            background-color: #252840;
+            border-color: #4a3b8c;
         }
 
         /* Nome da página atual */
         .nome-selecionado {
-            border: 2px solid #000;
-            padding: 0.5rem 2rem;
+            border: 2px solid #2d2f44;
+            padding: 0.7rem 2.5rem;
             width: fit-content;
-            margin: 0 auto 1.5rem;
-            color: #60b8e0;
-            font-size: 1.2rem;
-            font-weight: bold;
-            background-color: #fff;
+            margin: 0 auto 2rem;
+            color: #c4b5fd;
+            font-size: 1.3rem;
+            font-weight: 600;
+            background-color: #1a1c2e;
+            border-radius: 6px;
         }
 
-        /* Área principal centralizada */
+        /* Área principal */
         .area-principal {
-            border: 3px solid #888;
-            padding: 1.5rem;
-            background-color: #fff;
-            max-width: 950px;
+            border: 3px solid #2d2f44;
+            padding: 2rem;
+            background-color: #161826;
+            max-width: 980px;
             width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         /* Grade de itens */
         .grade-imagens {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .item-imagem {
-            border: 2px solid #f8a8c8;
-            background-color: #fff;
-            padding: 0.8rem;
+            border: 2px solid #333552;
+            background-color: #1e2033;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            min-height: 160px;
-            gap: 0.8rem;
+            min-height: 170px;
+            gap: 1rem;
+            border-radius: 6px;
+            transition: border-color 0.2s;
         }
 
-        /* Área da imagem - APENAS VISUALIZAÇÃO para usuários */
+        .item-imagem:hover {
+            border-color: #4a3b8c;
+        }
+
+        /* Área da imagem - apenas visualização */
         .imagem-container {
             width: 100%;
-            height: 90px;
+            height: 95px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            padding: 0.3rem;
+            padding: 0.4rem;
+            border: 1px dashed #444668;
+            border-radius: 4px;
+            pointer-events: none;
+            background-color: #191b2b;
         }
 
         .imagem-container img {
@@ -116,41 +137,55 @@
         }
 
         .texto-imagem {
-            color: #60b8e0;
+            color: #94a3b8;
             font-size: 1rem;
             text-align: center;
         }
 
-        /* Caixa de seleção */
+        /* Caixa de marcação */
         .caixa-selecao {
-            width: 26px;
-            height: 26px;
-            border: 2px solid #000;
-            background-color: #fff;
+            width: 28px;
+            height: 28px;
+            border: 2px solid #6366f1;
+            background-color: #1e2033;
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            color: #a5b4fc;
             user-select: none;
+            transition: all 0.2s ease;
         }
 
         .caixa-selecao.selecionado {
-            background-color: #90ee90;
-            color: #000;
+            background-color: #22c55e;
+            border-color: #16a34a;
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+        }
+
+        .caixa-selecao:hover:not(.selecionado) {
+            border-color: #818cf8;
+            background-color: #252840;
         }
 
         /* Responsividade */
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             .grade-imagens {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 520px) {
             .grade-imagens {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .titulo {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -173,8 +208,7 @@
     </div>
 
     <script>
-        // 📌 DADOS PRINCIPAIS: AQUI VOCÊ EDITA IMAGENS E NOMES
-        // Apenas você altera esta parte do código
+        // 📌 DADOS FIXOS: AQUI VOCÊ EDITA NOMES E IMAGENS (só você altera)
         const dadosBase = {
             paginaAtual: 'pagina1',
             paginas: {
@@ -232,12 +266,13 @@
             }
         };
 
-        // Carrega marcações feitas pelos usuários (não altera as imagens)
-        let dados = JSON.parse(localStorage.getItem('dadosPotGLA')) || dadosBase;
+        // Carrega apenas as marcações de cada usuário
+        let dados = JSON.parse(localStorage.getItem('dadosPotGLA')) || JSON.parse(JSON.stringify(dadosBase));
 
-        // Garante que as imagens não sejam alteradas pelos usuários
-        function sincronizarImagens() {
+        // Garante que imagens e nomes não sejam alterados
+        function sincronizarDadosFixos() {
             for (const idPagina in dados.paginas) {
+                dados.paginas[idPagina].nome = dadosBase.paginas[idPagina].nome;
                 dados.paginas[idPagina].itens.forEach((item, i) => {
                     item.imagem = dadosBase.paginas[idPagina].itens[i].imagem;
                 });
@@ -247,9 +282,9 @@
         const grade = document.getElementById('grade');
         const nomeAtualEl = document.getElementById('nomeAtual');
 
-        // Renderizar a página
+        // Monta a tela
         function renderizarPagina() {
-            sincronizarImagens();
+            sincronizarDadosFixos();
             const pag = dados.paginas[dados.paginaAtual];
             nomeAtualEl.textContent = pag.nome;
 
@@ -273,24 +308,24 @@
         // Trocar de página
         function carregarPagina(nomePagina) {
             dados.paginaAtual = nomePagina;
-            salvarDados();
+            salvarMarcacoes();
             renderizarPagina();
         }
 
-        // Marcar/desmarcar (apenas isso que o usuário pode fazer)
+        // Marcar / Desmarcar
         function alternarMarcacao(index) {
-            const pag = dados.paginas[dadosGerais?.paginaAtual || dados.paginaAtual];
+            const pag = dados.paginas[dados.paginaAtual];
             pag.itens[index].marcado = !pag.itens[index].marcado;
-            salvarDados();
+            salvarMarcacoes();
             renderizarPagina();
         }
 
         // Salva apenas as marcações
-        function salvarDados() {
+        function salvarMarcacoes() {
             localStorage.setItem('dadosPotGLA', JSON.stringify(dados));
         }
 
-        // Iniciar
+        // Inicia a aplicação
         renderizarPagina();
     </script>
 
