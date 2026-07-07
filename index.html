@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Cadastro de Imagens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            padding: 2rem;
+            background-color: #f8f8f8;
+        }
+
+        /* Linha superior de nomes */
+        .nomes-superior {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nome-box {
+            border: 2px solid #000;
+            padding: 0.5rem 1.5rem;
+            min-width: 100px;
+            text-align: center;
+            color: #60b8e0;
+            font-size: 1.1rem;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nome-box:hover {
+            background-color: #f0f8ff;
+        }
+
+        /* Nome selecionado */
+        .nome-selecionado {
+            border: 2px solid #000;
+            padding: 0.5rem 2rem;
+            width: fit-content;
+            margin: 0 auto 1rem;
+            color: #60b8e0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #fff;
+        }
+
+        /* Área principal */
+        .area-principal {
+            border: 3px solid #888;
+            padding: 1.5rem;
+            background-color: #fff;
+            max-width: 950px;
+        }
+
+        /* Grade de itens */
+        .grade-imagens {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+        }
+
+        .item-imagem {
+            border: 2px solid #f8a8c8;
+            background-color: #fff;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 160px;
+            gap: 0.8rem;
+        }
+
+        /* Área da imagem */
+        .imagem-container {
+            width: 100%;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px dashed #ccc;
+            cursor: pointer;
+            padding: 0.3rem;
+        }
+
+        .imagem-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .texto-imagem {
+            color: #60b8e0;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* Input oculto */
+        .input-arquivo {
+            display: none;
+        }
+
+        /* Caixa de seleção */
+        .caixa-selecao {
+            width: 26px;
+            height: 26px;
+            border: 2px solid #000;
+            background-color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            user-select: none;
+        }
+
+        .caixa-selecao.selecionado {
+            background-color: #90ee90;
+            color: #000;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .grade-imagens {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grade-imagens {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Linha de nomes -->
+    <div class="nomes-superior">
+        <div class="nome-box" onclick="selecionarNome('nome 1')">nome 1</div>
+        <div class="nome-box" onclick="selecionarNome('nome 2')">nome 2</div>
+        <div class="nome-box" onclick="selecionarNome('nome 3')">nome 3</div>
+        <div class="nome-box" onclick="selecionarNome('nome 4')">nome 4</div>
+        <div class="nome-box" onclick="selecionarNome('nome 5')">nome 5</div>
+    </div>
+
+    <div class="nome-selecionado" id="nomeAtual">nome 1</div>
+
+    <div class="area-principal">
+        <div class="grade-imagens" id="grade">
+            <!-- Os 12 itens são criados automaticamente pelo código -->
+        </div>
+    </div>
+
+    <script>
+        // Dados salvos no navegador
+        let dados = JSON.parse(localStorage.getItem('dadosCadastro')) || {
+            nomeAtual: 'nome 1',
+            itens: Array.from({length: 12}, () => ({imagem: '', marcado: false}))
+        };
+
+        const grade = document.getElementById('grade');
+        const nomeAtualEl = document.getElementById('nomeAtual');
+
+        // Criar os itens da grade
+        function criarGrade() {
+            grade.innerHTML = '';
+            dados.itens.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-imagem';
+                div.innerHTML = `
+                    <label class="imagem-container" for="img${index}">
+                        ${item.imagem ? `<img src="${item.imagem}" alt="Imagem">` : `<span class="texto-imagem">Clique para adicionar</span>`}
+                        <input type="file" class="input-arquivo" id="img${index}" accept="image/*">
+                    </label>
+                    <div class="caixa-selecao ${item.marcado ? 'selecionado' : ''}" onclick="alternar(${index})">${item.marcado ? '✗' : ''}</div>
+                `;
+                grade.appendChild(div);
+                // Adiciona evento para carregar imagem
+                div.querySelector('input').addEventListener('change', (e) => carregar(e, index));
+            });
+            nomeAtualEl.textContent = dados.nomeAtual;
+        }
+
+        // Trocar nome
+        function selecionarNome(nome) {
+            dados.nomeAtual = nome;
+            salvar();
+            nomeAtualEl.textContent = nome;
+        }
+
+        // Marcar/desmarcar
+        function alternar(index) {
+            dados.itens[index].marcado = !dados.itens[index].marcado;
+            salvar();
+            criarGrade();
+        }
+
+        // Carregar imagem
+        function carregar(e, index) {
+            const arquivo = e.target.files[0];
+            if (!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onload = (ev) => {
+                dados.itens[index].imagem = ev.target.result;
+                salvar();
+                criarGrade();
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        // Salvar tudo para não perder
+        function salvar() {
+            localStorage.setItem('dadosCadastro', JSON.stringify(dados));
+        }
+
+        // Iniciar a página
+        criarGrade();
+    </script>
+
+</body>
+</html>
