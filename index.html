@@ -563,7 +563,7 @@
         <button class="modal-close" id="modal-close">&times;</button>
       </div>
       <div class="modal-chests" id="modal-chests"></div>
-      <div class="modal-footer">Marque os 5 baús conforme for encontrando. As imagens de localização e recompensa são cadastradas pelo administrador do site.</div>
+      <div class="modal-footer">Marque os baús conforme for encontrando. As imagens de localização e recompensa são cadastradas pelo administrador do site.</div>
     </div>
   </div>
 
@@ -25872,27 +25872,15 @@ const CONFIG = [
    direto no código e recarrega a página.
    ======================================================================== */
 const CHEST_IMAGES = {
-  // Exemplo de preenchimento (apague/ajuste conforme for cadastrando):
-  // nav2: {
-  //   pag1: {
-  //     i1: [
-  //       { location: ['https://.../loc1.png','https://.../loc2.png'], reward: ['https://.../rec1.png'] },
-  //       { location: [], reward: [] },
-  //       { location: [], reward: [] },
-  //       { location: [], reward: [] },
-  //       { location: [], reward: [] }
-  //     ]
-  //   }
-  // }
   nav2: {
-	pag1: {
-		i1: [
-			{ location: ['https://wiki.gla.com.br/images/9/96/Fooshabau02.jpg'], reward: ['https://wiki.gla.com.br/images/c/cd/Fooshacompensa2.jpg'] },
-			{ location: ['https://wiki.gla.com.br/images/e/e0/Foosha_bau03.jpg'], reward: ['https://wiki.gla.com.br/images/7/71/Fooshacompensa3.jpg'] },
-			{ location: ['https://wiki.gla.com.br/images/3/3e/Foosha_bau04.jpg', 'https://wiki.gla.com.br/images/4/4c/Foosha_bau05.jpg'], reward: ['https://wiki.gla.com.br/images/b/b8/Fooshacompensa4.jpg'] },
-		]
-	}
-}
+    pag1: {
+      i1: [
+        { location: ['https://wiki.gla.com.br/images/9/96/Fooshabau02.jpg'], reward: ['https://wiki.gla.com.br/images/c/cd/Fooshacompensa2.jpg'] },
+        { location: ['https://wiki.gla.com.br/images/e/e0/Foosha_bau03.jpg'], reward: ['https://wiki.gla.com.br/images/7/71/Fooshacompensa3.jpg'] },
+        { location: ['https://wiki.gla.com.br/images/3/3e/Foosha_bau04.jpg', 'https://wiki.gla.com.br/images/4/4c/Foosha_bau05.jpg'], reward: ['https://wiki.gla.com.br/images/b/b8/Fooshacompensa4.jpg'] }
+      ]
+    }
+  }
 };
 
 function getChestImages(navId, pagId, itemId, idx){
@@ -25902,6 +25890,28 @@ function getChestImages(navId, pagId, itemId, idx){
     location: (entry && Array.isArray(entry.location)) ? entry.location : [],
     reward: (entry && Array.isArray(entry.reward)) ? entry.reward : []
   };
+}
+
+/* ========================================================================
+   QUANTIDADE DE BAÚS POR ILHA — EDITADO SOMENTE PELO DEV
+   ------------------------------------------------------------------------
+   Defina aqui quantos baús cada ilha (página) tem. Ilhas que não aparecem
+   na lista usam o valor padrão (DEFAULT_CHEST_COUNT).
+   Formato: CHEST_COUNTS[navId][pagId] = numero
+   ======================================================================== */
+const DEFAULT_CHEST_COUNT = 5;
+
+const CHEST_COUNTS = {
+  nav2: {
+    pag1: 5   // Foosha Village
+    // pag2: 3,   // Shells Town — exemplo: essa ilha teria só 3 baús
+    // pag4: 7,   // Orange Town — exemplo: essa ilha teria 7 baús
+  }
+};
+
+function getChestCount(navId, pagId){
+  const count = CHEST_COUNTS?.[navId]?.[pagId];
+  return (typeof count === 'number' && count > 0) ? count : DEFAULT_CHEST_COUNT;
 }
 
 function galleryHtml(urls){
@@ -25996,23 +26006,24 @@ function galleryHtml(urls){
     items.forEach(item => { obj[item.id] = false; });
     return obj;
   }
-  function buildBlankPageBaus(items){
+  function buildBlankPageBaus(navId, pagId, items){
+    const count = getChestCount(navId, pagId);
     const obj = {};
-    items.forEach(item => { obj[item.id] = Array(BAUS_PER_ITEM).fill(false); });
+    items.forEach(item => { obj[item.id] = Array(count).fill(false); });
     return obj;
   }
 
   const BAUS_NAV_ID = 'nav2';
-  const BAUS_PER_ITEM = 5;
 
   function buildDefaultBaus(){
     const data = {};
     CONFIG.forEach(nav => {
       data[nav.id] = {};
       nav.pages.forEach(pag => {
+        const count = getChestCount(nav.id, pag.id);
         data[nav.id][pag.id] = {};
         pag.items.forEach(item => {
-          data[nav.id][pag.id][item.id] = Array(BAUS_PER_ITEM).fill(false);
+          data[nav.id][pag.id][item.id] = Array(count).fill(false);
         });
       });
     });
@@ -26027,10 +26038,11 @@ function galleryHtml(urls){
         const saved = JSON.parse(raw);
         CONFIG.forEach(nav => {
           nav.pages.forEach(pag => {
+            const count = getChestCount(nav.id, pag.id);
             pag.items.forEach(item => {
               const savedArr = saved[nav.id] && saved[nav.id][pag.id] && saved[nav.id][pag.id][item.id];
               if(Array.isArray(savedArr)){
-                fresh[nav.id][pag.id][item.id] = Array(BAUS_PER_ITEM)
+                fresh[nav.id][pag.id][item.id] = Array(count)
                   .fill(false)
                   .map((_, i) => !!savedArr[i]);
               }
@@ -26159,7 +26171,7 @@ function galleryHtml(urls){
   function resetPageEntry(navId, pagId){
     const pag = findPagina(navId, pagId);
     DATA[navId][pagId] = buildBlankPageData(pag.items);
-    DATA_BAUS[navId][pagId] = buildBlankPageBaus(pag.items);
+    DATA_BAUS[navId][pagId] = buildBlankPageBaus(navId, pagId, pag.items);
   }
 
   function resetPageData(navId, pagId){
@@ -26272,12 +26284,13 @@ function galleryHtml(urls){
       if(isBaus){
         const chests = DATA_BAUS[currentNavId][currentPagId][item.id] || [];
         const doneCount = chests.filter(Boolean).length;
+        const totalCount = chests.length;
 
         card.className = 'card baus-card';
         card.innerHTML = `
           <div class="thumb">${thumbContent}</div>
           <div class="caption">${item.name}</div>
-          <div class="progress-label">${doneCount}/${BAUS_PER_ITEM} baús</div>
+          <div class="progress-label">${doneCount}/${totalCount} baús</div>
           <div class="chk ${isChecked ? 'checked' : ''}">
             ${CHECK_ICON}
           </div>
