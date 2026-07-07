@@ -131,12 +131,21 @@
     color: var(--text);
   }
 
+  .search-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
   .search-bar{
     display:flex;
     align-items:center;
     gap: 8px;
     max-width: 420px;
-    margin: 0 auto 18px;
+    width: 100%;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 999px;
@@ -193,6 +202,44 @@
     color: var(--text-dim);
     font-size: 14px;
     padding: 30px 10px;
+  }
+
+  .hide-marked-btn{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s ease;
+    white-space: nowrap;
+  }
+
+  .hide-marked-btn svg{
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  .hide-marked-btn:hover{
+    border-color: var(--purple-light);
+    color: var(--text);
+  }
+
+  .hide-marked-btn.active{
+    background: rgba(108,76,245,0.15);
+    border-color: var(--purple);
+    color: var(--purple-light);
   }
 
   .page-section{
@@ -621,10 +668,16 @@
   <div class="tabs" id="tabs-navegador"></div>
   <div class="tabs" id="tabs-pagina"></div>
 
-  <div class="search-bar">
-    <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="search-input" placeholder="Buscar personagem...">
-    <button id="search-clear" class="search-clear-btn" title="Limpar busca" style="display:none;">&times;</button>
+  <div class="search-row">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="search-input" placeholder="Buscar personagem...">
+      <button id="search-clear" class="search-clear-btn" title="Limpar busca" style="display:none;">&times;</button>
+    </div>
+    <button class="hide-marked-btn" id="hide-marked-btn" title="Ocultar os já marcados">
+      <svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+      <span>Ocultar marcados</span>
+    </button>
   </div>
 
   <div class="page-section">
@@ -27008,6 +27061,7 @@ function galleryHtml(urls){
   }
 
   let searchQuery = '';
+  let hideMarked = false;
 
   function normalizeText(str){
     return (str || '')
@@ -27029,12 +27083,20 @@ function galleryHtml(urls){
     const isBaus = currentNavId === BAUS_NAV_ID;
 
     const query = normalizeText(searchQuery);
-    const items = query
+    let items = query
       ? pag.items.filter(item => normalizeText(item.name).includes(query))
       : pag.items;
 
+    if(hideMarked){
+      items = items.filter(item => !pageState[item.id]);
+    }
+
+    const totalInPage = pag.items.length;
     noResultsEl.style.display = items.length === 0 ? 'block' : 'none';
     grid.style.display = items.length === 0 ? 'none' : 'grid';
+    noResultsEl.textContent = (hideMarked && items.length === 0 && totalInPage > 0)
+      ? 'Todos os personagens desta página já estão marcados.'
+      : 'Nenhum personagem encontrado.';
 
     items.forEach(item => {
       const isChecked = !!pageState[item.id];
@@ -27072,8 +27134,12 @@ function galleryHtml(urls){
         card.addEventListener('click', () => {
           const newVal = !DATA[currentNavId][currentPagId][item.id];
           DATA[currentNavId][currentPagId][item.id] = newVal;
-          chkEl.classList.toggle('checked', newVal);
           saveState();
+          if(hideMarked){
+            renderGrid();
+          } else {
+            chkEl.classList.toggle('checked', newVal);
+          }
         });
       }
 
@@ -27095,6 +27161,14 @@ function galleryHtml(urls){
     searchInput.value = '';
     searchClearBtn.style.display = 'none';
     searchInput.focus();
+    renderGrid();
+  });
+
+  const hideMarkedBtn = document.getElementById('hide-marked-btn');
+  hideMarkedBtn.addEventListener('click', () => {
+    hideMarked = !hideMarked;
+    hideMarkedBtn.classList.toggle('active', hideMarked);
+    hideMarkedBtn.querySelector('span').textContent = hideMarked ? 'Mostrar marcados' : 'Ocultar marcados';
     renderGrid();
   });
 
