@@ -12,6 +12,7 @@
             font-family: Arial, sans-serif;
         }
 
+        /* Fundo geral escuro */
         body {
             padding: 2rem;
             background-color: #0f111a;
@@ -20,29 +21,29 @@
             align-items: center;
         }
 
-        /* Título */
+        /* Título PotGLA */
         .titulo {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: bold;
             color: #a881ff;
             margin-bottom: 2rem;
         }
 
         /* Botões das páginas */
-        .linha-paginas {
+        .botoes-paginas {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 12px;
+            margin-bottom: 1.2rem;
         }
 
         .botao-pagina {
-            border: 2px solid #b088f9;
-            padding: 0.5rem 1.5rem;
-            min-width: 100px;
+            border: 2px solid #ffffff;
+            background-color: #1a1c2e;
+            color: #93c5fd;
+            padding: 8px 24px;
+            min-width: 110px;
             text-align: center;
             font-size: 1.1rem;
-            background-color: #1a1c2e;
-            color: #c4b5fd;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -50,7 +51,7 @@
         .botao-pagina.ativo {
             background-color: #5b21b6;
             border-color: #7c3aed;
-            color: white;
+            color: #ffffff;
         }
 
         .botao-pagina:hover {
@@ -59,22 +60,21 @@
 
         /* Nome da página atual */
         .pagina-atual {
-            border: 2px solid #b088f9;
-            padding: 0.5rem 2rem;
-            width: fit-content;
+            border: 2px solid #ffffff;
+            background-color: #1a1c2e;
+            color: #93c5fd;
+            padding: 8px 32px;
             margin-bottom: 1.5rem;
             font-size: 1.2rem;
             font-weight: bold;
-            background-color: #1a1c2e;
-            color: #c4b5fd;
         }
 
         /* Área principal */
         .area-principal {
-            border: 3px solid #888;
-            padding: 1.5rem;
+            border: 3px solid #888888;
             background-color: #161826;
-            max-width: 1050px;
+            padding: 1.5rem;
+            max-width: 1100px;
             width: 100%;
         }
 
@@ -88,7 +88,7 @@
         .item {
             border: 2px solid #f8a8c8;
             background-color: #1e2033;
-            padding: 1.5rem 0.5rem;
+            padding: 2rem 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -99,28 +99,28 @@
         .texto-imagem {
             color: #93c5fd;
             font-size: 1.1rem;
-            margin-bottom: 1rem;
         }
 
         /* Caixa de marcação */
         .caixa {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #a5b4fc;
+            width: 26px;
+            height: 26px;
+            border: 2px solid #ffffff;
             background-color: #1e2033;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
             font-size: 1.2rem;
-            color: #a5b4fc;
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 1rem;
         }
 
         .caixa.marcado {
             background-color: #22c55e;
             border-color: #16a34a;
-            color: white;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -128,10 +128,10 @@
 
     <h1 class="titulo">PotGLA</h1>
 
-    <div class="linha-paginas">
-        <div class="botao-pagina ativo" onclick="irParaPagina(1)">Página 1</div>
-        <div class="botao-pagina" onclick="irParaPagina(2)">Página 2</div>
-        <div class="botao-pagina" onclick="irParaPagina(3)">Página 3</div>
+    <div class="botoes-paginas">
+        <div class="botao-pagina ativo" onclick="mudarPagina(1)">Página 1</div>
+        <div class="botao-pagina" onclick="mudarPagina(2)">Página 2</div>
+        <div class="botao-pagina" onclick="mudarPagina(3)">Página 3</div>
     </div>
 
     <div class="pagina-atual" id="nomePagina">Página 1</div>
@@ -141,7 +141,7 @@
     </div>
 
     <script>
-        // Dados das páginas
+        // Dados salvos: cada página tem suas próprias marcações
         let dados = JSON.parse(localStorage.getItem('dadosPotGLA')) || {
             paginaAtual: 1,
             paginas: [
@@ -151,17 +151,17 @@
             ]
         };
 
-        // Renderizar a página
+        // Renderizar a página atual
         function renderizar() {
-            const pag = dados.paginas[dados.paginaAtual - 1];
-            document.getElementById('nomePagina').textContent = pag.nome;
+            const pagina = dados.paginas[dados.paginaAtual - 1];
+            document.getElementById('nomePagina').textContent = pagina.nome;
 
-            // Ativar botão
-            document.querySelectorAll('.botao-pagina').forEach((botao, i) => {
-                botao.classList.toggle('ativo', i + 1 === dados.paginaAtual);
+            // Destacar o botão da página ativa
+            document.querySelectorAll('.botao-pagina').forEach((botao, indice) => {
+                botao.classList.toggle('ativo', indice + 1 === dados.paginaAtual);
             });
 
-            // Montar a grade
+            // Montar a grade de 12 itens
             const grade = document.getElementById('grade');
             grade.innerHTML = '';
             for (let i = 0; i < 12; i++) {
@@ -169,33 +169,33 @@
                 div.className = 'item';
                 div.innerHTML = `
                     <span class="texto-imagem">Imagem</span>
-                    <div class="caixa ${pag.marcacoes[i] ? 'marcado' : ''}" onclick="marcar(${i})">${pag.marcacoes[i] ? '✗' : ''}</div>
+                    <div class="caixa ${pagina.marcacoes[i] ? 'marcado' : ''}" onclick="alternarMarcacao(${i})">${pagina.marcacoes[i] ? '✗' : ''}</div>
                 `;
                 grade.appendChild(div);
             }
         }
 
         // Trocar de página
-        function irParaPagina(num) {
-            dados.paginaAtual = num;
-            salvar();
+        function mudarPagina(numero) {
+            dados.paginaAtual = numero;
+            salvarDados();
             renderizar();
         }
 
-        // Marcar / Desmarcar
-        function marcar(indice) {
-            const pag = dados.paginas[dados.paginaAtual - 1];
-            pag.marcacoes[indice] = !pag.marcacoes[indice];
-            salvar();
+        // Marcar ou desmarcar item
+        function alternarMarcacao(indice) {
+            const pagina = dados.paginas[dados.paginaAtual - 1];
+            pagina.marcacoes[indice] = !pagina.marcacoes[indice];
+            salvarDados();
             renderizar();
         }
 
-        // Salvar dados
-        function salvar() {
+        // Salvar para não perder ao fechar a página
+        function salvarDados() {
             localStorage.setItem('dadosPotGLA', JSON.stringify(dados));
         }
 
-        // Iniciar
+        // Iniciar a aplicação
         renderizar();
     </script>
 
