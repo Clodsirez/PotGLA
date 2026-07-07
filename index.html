@@ -12,10 +12,9 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Fundo geral escuro */
         body {
-            padding: 2rem;
-            background-color: #0f111a;
+            padding: 30px;
+            background-color: #f9f9f9; /* Fundo claro igual ao seu desenho */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,104 +22,95 @@
 
         /* Título PotGLA */
         .titulo {
-            font-size: 2rem;
+            font-size: 28px;
             font-weight: bold;
-            color: #a881ff;
-            margin-bottom: 2rem;
+            color: #333333;
+            margin-bottom: 20px;
         }
 
         /* Botões das páginas */
-        .botoes-paginas {
+        .linha-botoes {
             display: flex;
             gap: 12px;
-            margin-bottom: 1.2rem;
+            margin-bottom: 15px;
         }
 
         .botao-pagina {
-            border: 2px solid #ffffff;
-            background-color: #1a1c2e;
-            color: #93c5fd;
-            padding: 8px 24px;
-            min-width: 110px;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            color: #60b8e0;
+            padding: 6px 22px;
+            min-width: 100px;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .botao-pagina.ativo {
-            background-color: #5b21b6;
-            border-color: #7c3aed;
-            color: #ffffff;
-        }
-
-        .botao-pagina:hover {
-            background-color: #252840;
+            background-color: #e6f4ff;
         }
 
         /* Nome da página atual */
         .pagina-atual {
-            border: 2px solid #ffffff;
-            background-color: #1a1c2e;
-            color: #93c5fd;
-            padding: 8px 32px;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            color: #60b8e0;
+            padding: 6px 30px;
+            margin-bottom: 20px;
+            font-size: 18px;
             font-weight: bold;
         }
 
         /* Área principal */
         .area-principal {
             border: 3px solid #888888;
-            background-color: #161826;
-            padding: 1.5rem;
-            max-width: 1100px;
+            background-color: #ffffff;
+            padding: 20px;
             width: 100%;
+            max-width: 1150px;
         }
 
         /* Grade de itens */
         .grade {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 1rem;
+            gap: 15px;
         }
 
         .item {
             border: 2px solid #f8a8c8;
-            background-color: #1e2033;
-            padding: 2rem 0.5rem;
+            background-color: #ffffff;
+            padding: 25px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            min-height: 140px;
+            min-height: 130px;
         }
 
         .texto-imagem {
-            color: #93c5fd;
-            font-size: 1.1rem;
+            color: #60b8e0;
+            font-size: 16px;
         }
 
         /* Caixa de marcação */
         .caixa {
-            width: 26px;
-            height: 26px;
-            border: 2px solid #ffffff;
-            background-color: #1e2033;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            margin-top: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
             font-weight: bold;
-            color: #ffffff;
-            margin-top: 1rem;
+            font-size: 16px;
         }
 
         .caixa.marcado {
-            background-color: #22c55e;
-            border-color: #16a34a;
-            color: #ffffff;
+            background-color: #90ee90;
+            color: #000000;
         }
     </style>
 </head>
@@ -128,20 +118,20 @@
 
     <h1 class="titulo">PotGLA</h1>
 
-    <div class="botoes-paginas">
-        <div class="botao-pagina ativo" onclick="mudarPagina(1)">Página 1</div>
-        <div class="botao-pagina" onclick="mudarPagina(2)">Página 2</div>
-        <div class="botao-pagina" onclick="mudarPagina(3)">Página 3</div>
+    <div class="linha-botoes">
+        <div class="botao-pagina ativo" onclick="trocarPagina(1)">Página 1</div>
+        <div class="botao-pagina" onclick="trocarPagina(2)">Página 2</div>
+        <div class="botao-pagina" onclick="trocarPagina(3)">Página 3</div>
     </div>
 
     <div class="pagina-atual" id="nomePagina">Página 1</div>
 
     <div class="area-principal">
-        <div class="grade" id="grade"></div>
+        <div class="grade" id="gradeItens"></div>
     </div>
 
     <script>
-        // Dados salvos: cada página tem suas próprias marcações
+        // Dados salvos
         let dados = JSON.parse(localStorage.getItem('dadosPotGLA')) || {
             paginaAtual: 1,
             paginas: [
@@ -151,52 +141,52 @@
             ]
         };
 
-        // Renderizar a página atual
-        function renderizar() {
+        // Montar a tela
+        function montarTela() {
             const pagina = dados.paginas[dados.paginaAtual - 1];
             document.getElementById('nomePagina').textContent = pagina.nome;
 
-            // Destacar o botão da página ativa
-            document.querySelectorAll('.botao-pagina').forEach((botao, indice) => {
-                botao.classList.toggle('ativo', indice + 1 === dados.paginaAtual);
+            // Ativar botão
+            document.querySelectorAll('.botao-pagina').forEach((botao, i) => {
+                botao.classList.toggle('ativo', i + 1 === dados.paginaAtual);
             });
 
-            // Montar a grade de 12 itens
-            const grade = document.getElementById('grade');
+            // Gerar os 12 itens
+            const grade = document.getElementById('gradeItens');
             grade.innerHTML = '';
             for (let i = 0; i < 12; i++) {
                 const div = document.createElement('div');
                 div.className = 'item';
                 div.innerHTML = `
                     <span class="texto-imagem">Imagem</span>
-                    <div class="caixa ${pagina.marcacoes[i] ? 'marcado' : ''}" onclick="alternarMarcacao(${i})">${pagina.marcacoes[i] ? '✗' : ''}</div>
+                    <div class="caixa ${pagina.marcacoes[i] ? 'marcado' : ''}" onclick="marcarItem(${i})">${pagina.marcacoes[i] ? '✗' : ''}</div>
                 `;
                 grade.appendChild(div);
             }
         }
 
         // Trocar de página
-        function mudarPagina(numero) {
-            dados.paginaAtual = numero;
+        function trocarPagina(num) {
+            dados.paginaAtual = num;
             salvarDados();
-            renderizar();
+            montarTela();
         }
 
-        // Marcar ou desmarcar item
-        function alternarMarcacao(indice) {
+        // Marcar/desmarcar
+        function marcarItem(indice) {
             const pagina = dados.paginas[dados.paginaAtual - 1];
             pagina.marcacoes[indice] = !pagina.marcacoes[indice];
             salvarDados();
-            renderizar();
+            montarTela();
         }
 
-        // Salvar para não perder ao fechar a página
+        // Salvar para não perder
         function salvarDados() {
             localStorage.setItem('dadosPotGLA', JSON.stringify(dados));
         }
 
-        // Iniciar a aplicação
-        renderizar();
+        // Iniciar
+        montarTela();
     </script>
 
 </body>
