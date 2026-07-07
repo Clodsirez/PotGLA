@@ -17,10 +17,9 @@
     --text-dim: #9a9ac0;
   }
 
-  *{ box-sizing: border-box; }
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
 
   body{
-    margin:0;
     min-height:100vh;
     background: var(--bg);
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -221,13 +220,9 @@
 
   <div class="logo">PotGLA</div>
 
-  <!-- Linha 1: NAVEGADORES (gerados via JS a partir de CONFIG) -->
   <div class="tabs" id="tabs-navegador"></div>
-
-  <!-- Linha 2: PÁGINAS do navegador selecionado (gerados via JS) -->
   <div class="tabs" id="tabs-pagina"></div>
 
-  <!-- Único grid, mostra o conteúdo da combinação navegador + página -->
   <div class="page-section">
     <div class="page-title"><span id="page-title">Página 1</span></div>
     <div class="grid" id="grid"></div>
@@ -236,37 +231,6 @@
   <div class="save-indicator" id="save-indicator">Salvo ✓</div>
 
 <script>
-  /* =========================================================================
-     CONFIGURAÇÃO
-     -------------------------------------------------------------------------
-     Pra adicionar mais navegadores, páginas ou imagens, só editar o
-     array/objeto abaixo. Não tem limite de quantidade.
-
-     Cada IMAGEM (item) agora tem 3 campos que você pode editar:
-       - id:    identificador único dentro da página (não pode repetir)
-       - name:  o nome que aparece escrito embaixo da imagem
-       - image: o link (URL) da imagem. Cole aqui o endereço de uma imagem
-                da internet (ex: "https://exemplo.com/imagem.png").
-                Se deixar em branco (""), aparece o ícone genérico de imagem.
-
-     Estrutura:
-     CONFIG = [
-       {
-         id: 'nav1',
-         name: 'Navegador A',
-         pages: [
-           {
-             id: 'pag1',
-             name: 'Início',
-             items: [
-               { id: 'i1', name: 'Nome que aparece embaixo', image: 'https://link-da-imagem.png' },
-               { id: 'i2', name: 'Outro nome',                image: '' }
-             ]
-           }
-         ]
-       }
-     ]
-  ========================================================================== */
   const CONFIG = [
     {
       id: 'nav1',
@@ -325,10 +289,10 @@
             { id: 'i5', name: 'Imagem', image: '' },
             { id: 'i6', name: 'Imagem', image: '' }
           ]
-        }
+        },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag4',
+          name: 'Personagens 1',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -339,8 +303,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag5',
+          name: 'Personagens 2',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -351,20 +315,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
-          items: [
-            { id: 'i1', name: 'Luffy', image: '' },
-            { id: 'i2', name: 'Nami', image: '' },
-            { id: 'i3', name: 'Imagem', image: '' },
-            { id: 'i4', name: 'Imagem', image: '' },
-            { id: 'i5', name: 'Imagem', image: '' },
-            { id: 'i6', name: 'Imagem', image: '' }
-          ]
-        }
-        {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag6',
+          name: 'Personagens 3',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -375,8 +327,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag7',
+          name: 'Personagens 4',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -387,8 +339,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag8',
+          name: 'Personagens 5',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -399,8 +351,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag9',
+          name: 'Personagens 6',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -411,8 +363,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag10',
+          name: 'Personagens 7',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -423,8 +375,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag11',
+          name: 'Personagens 8',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -435,8 +387,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag12',
+          name: 'Personagens 9',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -447,8 +399,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag13',
+          name: 'Personagens 10',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -459,8 +411,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag14',
+          name: 'Personagens 11',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -471,8 +423,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag15',
+          name: 'Personagens 12',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -483,8 +435,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag16',
+          name: 'Personagens 13',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -495,8 +447,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag17',
+          name: 'Personagens 14',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -507,8 +459,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag18',
+          name: 'Personagens 15',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -519,8 +471,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag19',
+          name: 'Personagens 16',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -531,8 +483,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag20',
+          name: 'Personagens 17',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -543,8 +495,8 @@
           ]
         },
         {
-          id: 'pag1',
-          name: 'Personagens',
+          id: 'pag21',
+          name: 'Personagens 18',
           items: [
             { id: 'i1', name: 'Luffy', image: '' },
             { id: 'i2', name: 'Nami', image: '' },
@@ -587,20 +539,6 @@
         { id: 'pag13', name: 'Sabaody Archipelago',   items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) }
       ]
     }
-    // Exemplo de como adicionar o navegador nº 20 (é só copiar este bloco):
-    // {
-    //   id: 'nav20',
-    //   name: 'Navegador 20',
-    //   pages: [
-    //     {
-    //       id: 'pag1',
-    //       name: 'Página 1',
-    //       items: [
-    //         { id: 'i1', name: 'Luffy', image: 'https://link-da-imagem.png' }
-    //       ]
-    //     }
-    //   ]
-    // }
   ];
 
   const STORAGE_KEY = 'potgla_state_dynamic_v2';
@@ -630,7 +568,6 @@
       nav.pages.forEach(pag => {
         data[nav.id][pag.id] = {};
         pag.items.forEach((item, i) => {
-          // padrão de exemplo: marca 1 a cada 3 itens
           data[nav.id][pag.id][item.id] = (i % 3 === 1);
         });
       });
