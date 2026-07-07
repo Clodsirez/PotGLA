@@ -132,6 +132,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    overflow: hidden;
   }
 
   .thumb svg{
@@ -140,9 +141,17 @@
     opacity: 0.55;
   }
 
+  .thumb img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   .caption{
     font-size: 13px;
     color: var(--text-dim);
+    text-align: center;
   }
 
   .chk{
@@ -230,82 +239,352 @@
   /* =========================================================================
      CONFIGURAÇÃO
      -------------------------------------------------------------------------
-     Pra adicionar mais navegadores, páginas ou imagens/marcações,
-     só editar o array/objeto abaixo. Não tem limite de quantidade —
-     o HTML e o layout se ajustam sozinhos (as abas quebram linha
-     automaticamente se não couberem, o grid também é responsivo).
+     Pra adicionar mais navegadores, páginas ou imagens, só editar o
+     array/objeto abaixo. Não tem limite de quantidade.
+
+     Cada IMAGEM (item) agora tem 3 campos que você pode editar:
+       - id:    identificador único dentro da página (não pode repetir)
+       - name:  o nome que aparece escrito embaixo da imagem
+       - image: o link (URL) da imagem. Cole aqui o endereço de uma imagem
+                da internet (ex: "https://exemplo.com/imagem.png").
+                Se deixar em branco (""), aparece o ícone genérico de imagem.
 
      Estrutura:
      CONFIG = [
        {
-         id: 'nav1',                 // identificador único do navegador
-         name: 'Navegador A',        // nome exibido na aba de cima
+         id: 'nav1',
+         name: 'Navegador A',
          pages: [
            {
-             id: 'pag1',             // identificador único da página (dentro deste navegador)
-             name: 'Início',         // nome exibido na aba de baixo
-             marks: 6                // quantidade de imagens/marcações nesta página
-           },
-           ...
+             id: 'pag1',
+             name: 'Início',
+             items: [
+               { id: 'i1', name: 'Nome que aparece embaixo', image: 'https://link-da-imagem.png' },
+               { id: 'i2', name: 'Outro nome',                image: '' }
+             ]
+           }
          ]
-       },
-       ...
+       }
      ]
   ========================================================================== */
   const CONFIG = [
     {
-      id: 'nav2',
+      id: 'nav1',
       name: 'Arlong Key',
       pages: [
-        { id: 'pag1', name: 'Personagens',         marks: 6 }
-      ]
-    },
-    {
-      id: 'nav1',
-      name: 'Baus',
-      pages: [
-        { id: 'pag1', name: 'Foosha Village',         marks: 6 },
-        { id: 'pag2', name: 'Shells Town',   marks: 6 },
-        { id: 'pag3', name: 'Samui Island',      marks: 6 },
-        { id: 'pag4', name: 'Orange Town',      marks: 6 },
-        { id: 'pag5', name: 'Syrup Village',      marks: 6 },
-        { id: 'pag6', name: 'Island of Rare Animals',      marks: 6 },
-        { id: 'pag7', name: 'Baratie',      marks: 6 },
-        { id: 'pag8', name: 'Cocoyasi Village',      marks: 6 },
-        { id: 'pag9', name: 'Loguetown',      marks: 6 },
-        { id: 'pag10', name: 'Kumo Island',      marks: 6 },
-        { id: 'pag11', name: 'East Blue (Mar)',      marks: 6 }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
       ]
     },
     {
       id: 'nav2',
-      name: 'Potion East Blue',
+      name: 'Baus',
       pages: [
-        { id: 'pag1', name: 'Shells Town',   marks: 6 },
-        { id: 'pag2', name: 'Samui Island',      marks: 6 },
-        { id: 'pag3', name: 'Syrup Village',      marks: 6 },
-        { id: 'pag4', name: 'Island of Rare Animals',      marks: 6 },
-        { id: 'pag5', name: 'Cocoyasi Village',      marks: 6 },
-        { id: 'pag6', name: 'Loguetown',      marks: 6 },
+        {
+          id: 'pag1',
+          name: 'Foosha Village',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag2',
+          name: 'Shells Town',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag3',
+          name: 'Samui Island',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
+        {
+          id: 'pag1',
+          name: 'Personagens',
+          items: [
+            { id: 'i1', name: 'Luffy', image: '' },
+            { id: 'i2', name: 'Nami', image: '' },
+            { id: 'i3', name: 'Imagem', image: '' },
+            { id: 'i4', name: 'Imagem', image: '' },
+            { id: 'i5', name: 'Imagem', image: '' },
+            { id: 'i6', name: 'Imagem', image: '' }
+          ]
+        }
       ]
     },
     {
       id: 'nav3',
+      name: 'Potion East Blue',
+      pages: [
+        { id: 'pag1', name: 'Shells Town',            items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag2', name: 'Samui Island',            items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag3', name: 'Syrup Village',           items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag4', name: 'Island of Rare Animals',  items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag5', name: 'Cocoyasi Village',        items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag6', name: 'Loguetown',               items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) }
+      ]
+    },
+    {
+      id: 'nav4',
       name: 'Potion Grand Line',
       pages: [
-        { id: 'pag1', name: 'Whisky Peak',         marks: 6 },
-        { id: 'pag2', name: 'Jaya',   marks: 6 },
-        { id: 'pag3', name: 'Little Garden',      marks: 6 },
-        { id: 'pag4', name: 'Drum Island',      marks: 6 },
-        { id: 'pag5', name: 'Nige Hashiru',      marks: 6 },
-        { id: 'pag6', name: 'Alabasta West',      marks: 6 },
-        { id: 'pag7', name: 'Alabasta East',      marks: 6 },
-        { id: 'pag8', name: 'Skypeia',      marks: 6 },
-        { id: 'pag9', name: 'Water 7',      marks: 6 },
-        { id: 'pag10', name: 'Enies Lobby',      marks: 6 },
-        { id: 'pag11', name: 'Amazon Lily',      marks: 6 },
-        { id: 'pag12', name: 'Kuragaina Island',      marks: 6 },
-        { id: 'pag13', name: 'Sabaody Archipelago',      marks: 6 }
+        { id: 'pag1',  name: 'Whisky Peak',           items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag2',  name: 'Jaya',                  items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag3',  name: 'Little Garden',         items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag4',  name: 'Drum Island',           items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag5',  name: 'Nige Hashiru',          items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag6',  name: 'Alabasta West',         items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag7',  name: 'Alabasta East',         items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag8',  name: 'Skypeia',               items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag9',  name: 'Water 7',               items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag10', name: 'Enies Lobby',           items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag11', name: 'Amazon Lily',           items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag12', name: 'Kuragaina Island',      items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) },
+        { id: 'pag13', name: 'Sabaody Archipelago',   items: Array.from({length:6},(_,i)=>({id:'i'+i,name:'Imagem',image:''})) }
       ]
     }
     // Exemplo de como adicionar o navegador nº 20 (é só copiar este bloco):
@@ -313,13 +592,18 @@
     //   id: 'nav20',
     //   name: 'Navegador 20',
     //   pages: [
-    //     { id: 'pag1', name: 'Página 1', marks: 6 },
-    //     { id: 'pag2', name: 'Página 2', marks: 6 }
+    //     {
+    //       id: 'pag1',
+    //       name: 'Página 1',
+    //       items: [
+    //         { id: 'i1', name: 'Luffy', image: 'https://link-da-imagem.png' }
+    //       ]
+    //     }
     //   ]
     // }
   ];
 
-  const STORAGE_KEY = 'potgla_state_dynamic';
+  const STORAGE_KEY = 'potgla_state_dynamic_v2';
 
   const IMAGE_ICON = `
     <svg viewBox="0 0 24 24">
@@ -344,8 +628,11 @@
     CONFIG.forEach(nav => {
       data[nav.id] = {};
       nav.pages.forEach(pag => {
-        // gera um padrão alternado (true/false) só pra ter algo de exemplo
-        data[nav.id][pag.id] = Array.from({length: pag.marks}, (_, i) => i % 3 === 1);
+        data[nav.id][pag.id] = {};
+        pag.items.forEach((item, i) => {
+          // padrão de exemplo: marca 1 a cada 3 itens
+          data[nav.id][pag.id][item.id] = (i % 3 === 1);
+        });
       });
     });
     return data;
@@ -357,12 +644,13 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if(raw){
         const saved = JSON.parse(raw);
-        // mescla o salvo com o padrão (caso CONFIG tenha mudado, ex: novo navegador/página)
         CONFIG.forEach(nav => {
           nav.pages.forEach(pag => {
-            if(saved[nav.id] && saved[nav.id][pag.id]){
-              fresh[nav.id][pag.id] = saved[nav.id][pag.id];
-            }
+            pag.items.forEach(item => {
+              if(saved[nav.id] && saved[nav.id][pag.id] && (item.id in saved[nav.id][pag.id])){
+                fresh[nav.id][pag.id][item.id] = saved[nav.id][pag.id][item.id];
+              }
+            });
           });
         });
       }
@@ -432,19 +720,24 @@
 
   function renderGrid(){
     const pag = findPagina(currentNavId, currentPagId);
-    const state = DATA[currentNavId][currentPagId];
+    const pageState = DATA[currentNavId][currentPagId];
     const grid = document.getElementById('grid');
     document.getElementById('page-title').textContent = pag.name;
     grid.innerHTML = '';
 
-    state.forEach((isChecked, i) => {
+    pag.items.forEach(item => {
+      const isChecked = !!pageState[item.id];
+      const thumbContent = item.image
+        ? `<img src="${item.image}" alt="${item.name}">`
+        : IMAGE_ICON;
+
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="thumb">${IMAGE_ICON}</div>
-        <div class="caption">Imagem</div>
+        <div class="thumb">${thumbContent}</div>
+        <div class="caption">${item.name}</div>
         <label class="chk ${isChecked ? 'checked' : ''}">
-          <input type="checkbox" ${isChecked ? 'checked' : ''} data-index="${i}">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} data-item-id="${item.id}">
           ${CHECK_ICON}
         </label>
       `;
@@ -455,8 +748,8 @@
       const input = chk.querySelector('input');
       input.addEventListener('change', () => {
         chk.classList.toggle('checked', input.checked);
-        const idx = parseInt(input.dataset.index, 10);
-        DATA[currentNavId][currentPagId][idx] = input.checked;
+        const itemId = input.dataset.itemId;
+        DATA[currentNavId][currentPagId][itemId] = input.checked;
         saveState();
       });
     });
