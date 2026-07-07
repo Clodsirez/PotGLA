@@ -39,6 +39,7 @@
 
   .tabs{
     display:flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap:8px;
     margin-bottom: 8px;
@@ -57,6 +58,7 @@
     font-size: 14px;
     cursor: pointer;
     transition: all .15s ease;
+    white-space: nowrap;
   }
 
   .tab.active{
@@ -92,6 +94,7 @@
     border-radius: 999px;
     font-size: 14px;
     font-weight: 600;
+    text-align: center;
   }
 
   .grid{
@@ -209,19 +212,11 @@
 
   <div class="logo">PotGLA</div>
 
-  <!-- Linha 1: escolhe o NAVEGADOR (1, 2 ou 3) -->
-  <div class="tabs" id="tabs-navegador">
-    <button class="tab active" data-value="1">Página 1</button>
-    <button class="tab" data-value="2">Página 2</button>
-    <button class="tab" data-value="3">Página 3</button>
-  </div>
+  <!-- Linha 1: NAVEGADORES (gerados via JS a partir de CONFIG) -->
+  <div class="tabs" id="tabs-navegador"></div>
 
-  <!-- Linha 2: escolhe a PÁGINA (1, 2 ou 3) dentro do navegador escolhido -->
-  <div class="tabs" id="tabs-pagina">
-    <button class="tab active" data-value="1">Página 1</button>
-    <button class="tab" data-value="2">Página 2</button>
-    <button class="tab" data-value="3">Página 3</button>
-  </div>
+  <!-- Linha 2: PÁGINAS do navegador selecionado (gerados via JS) -->
+  <div class="tabs" id="tabs-pagina"></div>
 
   <!-- Único grid, mostra o conteúdo da combinação navegador + página -->
   <div class="page-section">
@@ -232,7 +227,99 @@
   <div class="save-indicator" id="save-indicator">Salvo ✓</div>
 
 <script>
-  const STORAGE_KEY = 'potgla_state_matrix';
+  /* =========================================================================
+     CONFIGURAÇÃO
+     -------------------------------------------------------------------------
+     Pra adicionar mais navegadores, páginas ou imagens/marcações,
+     só editar o array/objeto abaixo. Não tem limite de quantidade —
+     o HTML e o layout se ajustam sozinhos (as abas quebram linha
+     automaticamente se não couberem, o grid também é responsivo).
+
+     Estrutura:
+     CONFIG = [
+       {
+         id: 'nav1',                 // identificador único do navegador
+         name: 'Navegador A',        // nome exibido na aba de cima
+         pages: [
+           {
+             id: 'pag1',             // identificador único da página (dentro deste navegador)
+             name: 'Início',         // nome exibido na aba de baixo
+             marks: 6                // quantidade de imagens/marcações nesta página
+           },
+           ...
+         ]
+       },
+       ...
+     ]
+  ========================================================================== */
+  const CONFIG = [
+    {
+      id: 'nav2',
+      name: 'Arlong Key',
+      pages: [
+        { id: 'pag1', name: 'Personagens',         marks: 6 }
+      ]
+    },
+    {
+      id: 'nav1',
+      name: 'Baus',
+      pages: [
+        { id: 'pag1', name: 'Foosha Village',         marks: 6 },
+        { id: 'pag2', name: 'Shells Town',   marks: 6 },
+        { id: 'pag3', name: 'Samui Island',      marks: 6 },
+        { id: 'pag4', name: 'Orange Town',      marks: 6 },
+        { id: 'pag5', name: 'Syrup Village',      marks: 6 },
+        { id: 'pag6', name: 'Island of Rare Animals',      marks: 6 },
+        { id: 'pag7', name: 'Baratie',      marks: 6 },
+        { id: 'pag8', name: 'Cocoyasi Village',      marks: 6 },
+        { id: 'pag9', name: 'Loguetown',      marks: 6 },
+        { id: 'pag10', name: 'Kumo Island',      marks: 6 },
+        { id: 'pag11', name: 'East Blue (Mar)',      marks: 6 }
+      ]
+    },
+    {
+      id: 'nav2',
+      name: 'Potion East Blue',
+      pages: [
+        { id: 'pag1', name: 'Shells Town',   marks: 6 },
+        { id: 'pag2', name: 'Samui Island',      marks: 6 },
+        { id: 'pag3', name: 'Syrup Village',      marks: 6 },
+        { id: 'pag4', name: 'Island of Rare Animals',      marks: 6 },
+        { id: 'pag5', name: 'Cocoyasi Village',      marks: 6 },
+        { id: 'pag6', name: 'Loguetown',      marks: 6 },
+      ]
+    },
+    {
+      id: 'nav3',
+      name: 'Potion Grand Line',
+      pages: [
+        { id: 'pag1', name: 'Whisky Peak',         marks: 6 },
+        { id: 'pag2', name: 'Jaya',   marks: 6 },
+        { id: 'pag3', name: 'Little Garden',      marks: 6 },
+        { id: 'pag4', name: 'Drum Island',      marks: 6 },
+        { id: 'pag5', name: 'Nige Hashiru',      marks: 6 },
+        { id: 'pag6', name: 'Alabasta West',      marks: 6 },
+        { id: 'pag7', name: 'Alabasta East',      marks: 6 },
+        { id: 'pag8', name: 'Skypeia',      marks: 6 },
+        { id: 'pag9', name: 'Water 7',      marks: 6 },
+        { id: 'pag10', name: 'Enies Lobby',      marks: 6 },
+        { id: 'pag11', name: 'Amazon Lily',      marks: 6 },
+        { id: 'pag12', name: 'Kuragaina Island',      marks: 6 },
+        { id: 'pag13', name: 'Sabaody Archipelago',      marks: 6 }
+      ]
+    }
+    // Exemplo de como adicionar o navegador nº 20 (é só copiar este bloco):
+    // {
+    //   id: 'nav20',
+    //   name: 'Navegador 20',
+    //   pages: [
+    //     { id: 'pag1', name: 'Página 1', marks: 6 },
+    //     { id: 'pag2', name: 'Página 2', marks: 6 }
+    //   ]
+    // }
+  ];
+
+  const STORAGE_KEY = 'potgla_state_dynamic';
 
   const IMAGE_ICON = `
     <svg viewBox="0 0 24 24">
@@ -245,34 +332,44 @@
 
   const CHECK_ICON = `<svg viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"></polyline></svg>`;
 
-  // Estado padrão: DATA[navegador][pagina] = array de marcações
-  // 3 navegadores x 3 páginas = 9 conjuntos diferentes
-  const DEFAULT_DATA = {
-    1: {
-      1: [true, true, false, false, true, false],
-      2: [false, true, true, false, false, true],
-      3: [true, false, false, true, true, false]
-    },
-    2: {
-      1: [false, false, true, true, false, true],
-      2: [true, true, false, true, false, false],
-      3: [false, true, true, false, true, false]
-    },
-    3: {
-      1: [true, false, true, false, true, true],
-      2: [false, true, false, true, false, true],
-      3: [true, true, true, false, false, false]
-    }
-  };
+  function findNavegador(navId){
+    return CONFIG.find(n => n.id === navId);
+  }
+  function findPagina(navId, pagId){
+    return findNavegador(navId).pages.find(p => p.id === pagId);
+  }
+
+  function buildDefaultData(){
+    const data = {};
+    CONFIG.forEach(nav => {
+      data[nav.id] = {};
+      nav.pages.forEach(pag => {
+        // gera um padrão alternado (true/false) só pra ter algo de exemplo
+        data[nav.id][pag.id] = Array.from({length: pag.marks}, (_, i) => i % 3 === 1);
+      });
+    });
+    return data;
+  }
 
   function loadState(){
+    const fresh = buildDefaultData();
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
+      if(raw){
+        const saved = JSON.parse(raw);
+        // mescla o salvo com o padrão (caso CONFIG tenha mudado, ex: novo navegador/página)
+        CONFIG.forEach(nav => {
+          nav.pages.forEach(pag => {
+            if(saved[nav.id] && saved[nav.id][pag.id]){
+              fresh[nav.id][pag.id] = saved[nav.id][pag.id];
+            }
+          });
+        });
+      }
     }catch(e){
       console.warn('Não foi possível ler o localStorage:', e);
     }
-    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    return fresh;
   }
 
   function saveState(){
@@ -293,13 +390,51 @@
   }
 
   const DATA = loadState();
-  let currentNavegador = 1;
-  let currentPagina = 1;
+  let currentNavId = CONFIG[0].id;
+  let currentPagId = CONFIG[0].pages[0].id;
+
+  function renderNavegadorTabs(){
+    const container = document.getElementById('tabs-navegador');
+    container.innerHTML = '';
+    CONFIG.forEach(nav => {
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (nav.id === currentNavId ? ' active' : '');
+      btn.textContent = nav.name;
+      btn.dataset.navId = nav.id;
+      btn.addEventListener('click', () => {
+        currentNavId = nav.id;
+        currentPagId = findNavegador(nav.id).pages[0].id;
+        renderNavegadorTabs();
+        renderPaginaTabs();
+        renderGrid();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function renderPaginaTabs(){
+    const container = document.getElementById('tabs-pagina');
+    container.innerHTML = '';
+    const nav = findNavegador(currentNavId);
+    nav.pages.forEach(pag => {
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (pag.id === currentPagId ? ' active' : '');
+      btn.textContent = pag.name;
+      btn.dataset.pagId = pag.id;
+      btn.addEventListener('click', () => {
+        currentPagId = pag.id;
+        renderPaginaTabs();
+        renderGrid();
+      });
+      container.appendChild(btn);
+    });
+  }
 
   function renderGrid(){
-    const state = DATA[currentNavegador][currentPagina];
+    const pag = findPagina(currentNavId, currentPagId);
+    const state = DATA[currentNavId][currentPagId];
     const grid = document.getElementById('grid');
-    document.getElementById('page-title').textContent = 'Página ' + currentPagina;
+    document.getElementById('page-title').textContent = pag.name;
     grid.innerHTML = '';
 
     state.forEach((isChecked, i) => {
@@ -321,34 +456,14 @@
       input.addEventListener('change', () => {
         chk.classList.toggle('checked', input.checked);
         const idx = parseInt(input.dataset.index, 10);
-        DATA[currentNavegador][currentPagina][idx] = input.checked;
+        DATA[currentNavId][currentPagId][idx] = input.checked;
         saveState();
       });
     });
   }
 
-  function setupTabRow(containerId, onSelect){
-    const container = document.getElementById(containerId);
-    const tabs = container.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        onSelect(parseInt(tab.dataset.value, 10));
-      });
-    });
-  }
-
-  setupTabRow('tabs-navegador', (value) => {
-    currentNavegador = value;
-    renderGrid();
-  });
-
-  setupTabRow('tabs-pagina', (value) => {
-    currentPagina = value;
-    renderGrid();
-  });
-
+  renderNavegadorTabs();
+  renderPaginaTabs();
   renderGrid();
 </script>
 
