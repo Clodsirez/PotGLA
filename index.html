@@ -34,11 +34,17 @@
     color: var(--purple-light);
     margin-bottom: 18px;
     letter-spacing: 0.5px;
+    text-align: center;
   }
 
   .tabs{
     display:flex;
+    justify-content: center;
     gap:8px;
+    margin-bottom: 8px;
+  }
+
+  .tabs:last-of-type{
     margin-bottom: 22px;
   }
 
@@ -203,18 +209,21 @@
 
   <div class="logo">PotGLA</div>
 
-  <div class="tabs">
-    <button class="tab active" data-page="4">Página 1</button>
-    <button class="tab" data-page="5">Página 2</button>
-    <button class="tab" data-page="6">Página 3</button>
-  </div>
-  
-  <div class="tabs">
-    <button class="tab active" data-page="1">Página 1</button>
-    <button class="tab" data-page="2">Página 2</button>
-    <button class="tab" data-page="3">Página 3</button>
+  <!-- Linha 1: escolhe o NAVEGADOR (1, 2 ou 3) -->
+  <div class="tabs" id="tabs-navegador">
+    <button class="tab active" data-value="1">Página 1</button>
+    <button class="tab" data-value="2">Página 2</button>
+    <button class="tab" data-value="3">Página 3</button>
   </div>
 
+  <!-- Linha 2: escolhe a PÁGINA (1, 2 ou 3) dentro do navegador escolhido -->
+  <div class="tabs" id="tabs-pagina">
+    <button class="tab active" data-value="1">Página 1</button>
+    <button class="tab" data-value="2">Página 2</button>
+    <button class="tab" data-value="3">Página 3</button>
+  </div>
+
+  <!-- Único grid, mostra o conteúdo da combinação navegador + página -->
   <div class="page-section">
     <div class="page-title"><span id="page-title">Página 1</span></div>
     <div class="grid" id="grid"></div>
@@ -223,7 +232,7 @@
   <div class="save-indicator" id="save-indicator">Salvo ✓</div>
 
 <script>
-  const STORAGE_KEY = 'potgla_state';
+  const STORAGE_KEY = 'potgla_state_matrix';
 
   const IMAGE_ICON = `
     <svg viewBox="0 0 24 24">
@@ -236,11 +245,24 @@
 
   const CHECK_ICON = `<svg viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"></polyline></svg>`;
 
-  // Estado padrão de cada página (usado somente se não houver nada salvo no navegador ainda)
+  // Estado padrão: DATA[navegador][pagina] = array de marcações
+  // 3 navegadores x 3 páginas = 9 conjuntos diferentes
   const DEFAULT_DATA = {
-    1: [false, true, false, false, true, false, true, false, true, false, false, true],
-    2: [true, false, true, true, false, false, false, true, false, true, false, false],
-    3: [false, false, true, false, true, true, false, false, true, false, true, false]
+    1: {
+      1: [true, true, false, false, true, false],
+      2: [false, true, true, false, false, true],
+      3: [true, false, false, true, true, false]
+    },
+    2: {
+      1: [false, false, true, true, false, true],
+      2: [true, true, false, true, false, false],
+      3: [false, true, true, false, true, false]
+    },
+    3: {
+      1: [true, false, true, false, true, true],
+      2: [false, true, false, true, false, true],
+      3: [true, true, true, false, false, false]
+    }
   };
 
   function loadState(){
@@ -271,13 +293,13 @@
   }
 
   const DATA = loadState();
-  let currentPage = 1;
+  let currentNavegador = 1;
+  let currentPagina = 1;
 
-  function buildGrid(pageNum){
-    currentPage = pageNum;
-    const state = DATA[pageNum];
+  function renderGrid(){
+    const state = DATA[currentNavegador][currentPagina];
     const grid = document.getElementById('grid');
-    document.getElementById('page-title').textContent = 'Página ' + pageNum;
+    document.getElementById('page-title').textContent = 'Página ' + currentPagina;
     grid.innerHTML = '';
 
     state.forEach((isChecked, i) => {
@@ -299,21 +321,35 @@
       input.addEventListener('change', () => {
         chk.classList.toggle('checked', input.checked);
         const idx = parseInt(input.dataset.index, 10);
-        DATA[currentPage][idx] = input.checked;
+        DATA[currentNavegador][currentPagina][idx] = input.checked;
         saveState();
       });
     });
   }
 
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      buildGrid(parseInt(tab.dataset.page, 10));
+  function setupTabRow(containerId, onSelect){
+    const container = document.getElementById(containerId);
+    const tabs = container.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        onSelect(parseInt(tab.dataset.value, 10));
+      });
     });
+  }
+
+  setupTabRow('tabs-navegador', (value) => {
+    currentNavegador = value;
+    renderGrid();
   });
 
-  buildGrid(1);
+  setupTabRow('tabs-pagina', (value) => {
+    currentPagina = value;
+    renderGrid();
+  });
+
+  renderGrid();
 </script>
 
 </body>
