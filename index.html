@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cadastro de Imagens</title>
+    <title>PotGLA</title>
     <style>
         * {
             margin: 0;
@@ -15,14 +15,26 @@
         body {
             padding: 2rem;
             background-color: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Linha superior de nomes */
+        /* Título principal */
+        .titulo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+
+        /* Botões das páginas */
         .nomes-superior {
             display: flex;
             gap: 1rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .nome-box {
@@ -34,31 +46,37 @@
             font-size: 1.1rem;
             background-color: #fff;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+        }
+
+        .nome-box.ativo {
+            background-color: #e6f4ff;
+            border-width: 3px;
         }
 
         .nome-box:hover {
             background-color: #f0f8ff;
         }
 
-        /* Nome selecionado */
+        /* Nome da página atual */
         .nome-selecionado {
             border: 2px solid #000;
             padding: 0.5rem 2rem;
             width: fit-content;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
             color: #60b8e0;
             font-size: 1.2rem;
             font-weight: bold;
             background-color: #fff;
         }
 
-        /* Área principal */
+        /* Área principal centralizada */
         .area-principal {
             border: 3px solid #888;
             padding: 1.5rem;
             background-color: #fff;
             max-width: 950px;
+            width: 100%;
         }
 
         /* Grade de itens */
@@ -80,7 +98,7 @@
             gap: 0.8rem;
         }
 
-        /* Área da imagem */
+        /* Área da imagem - APENAS VISUALIZAÇÃO para usuários */
         .imagem-container {
             width: 100%;
             height: 90px;
@@ -88,8 +106,6 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 1px dashed #ccc;
-            cursor: pointer;
             padding: 0.3rem;
         }
 
@@ -103,11 +119,6 @@
             color: #60b8e0;
             font-size: 1rem;
             text-align: center;
-        }
-
-        /* Input oculto */
-        .input-arquivo {
-            display: none;
         }
 
         /* Caixa de seleção */
@@ -146,87 +157,141 @@
 </head>
 <body>
 
-    <!-- Linha de nomes -->
+    <h1 class="titulo">PotGLA</h1>
+
+    <!-- Botões para trocar de página -->
     <div class="nomes-superior">
-        <div class="nome-box" onclick="selecionarNome('nome 1')">nome 1</div>
-        <div class="nome-box" onclick="selecionarNome('nome 2')">nome 2</div>
-        <div class="nome-box" onclick="selecionarNome('nome 3')">nome 3</div>
-        <div class="nome-box" onclick="selecionarNome('nome 4')">nome 4</div>
-        <div class="nome-box" onclick="selecionarNome('nome 5')">nome 5</div>
+        <div class="nome-box" onclick="carregarPagina('pagina1')" id="btn-pagina1">Página 1</div>
+        <div class="nome-box" onclick="carregarPagina('pagina2')" id="btn-pagina2">Página 2</div>
+        <div class="nome-box" onclick="carregarPagina('pagina3')" id="btn-pagina3">Página 3</div>
     </div>
 
-    <div class="nome-selecionado" id="nomeAtual">nome 1</div>
+    <div class="nome-selecionado" id="nomeAtual">Página 1</div>
 
     <div class="area-principal">
-        <div class="grade-imagens" id="grade">
-            <!-- Os 12 itens são criados automaticamente pelo código -->
-        </div>
+        <div class="grade-imagens" id="grade"></div>
     </div>
 
     <script>
-        // Dados salvos no navegador
-        let dados = JSON.parse(localStorage.getItem('dadosCadastro')) || {
-            nomeAtual: 'nome 1',
-            itens: Array.from({length: 12}, () => ({imagem: '', marcado: false}))
+        // 📌 DADOS PRINCIPAIS: AQUI VOCÊ EDITA IMAGENS E NOMES
+        // Apenas você altera esta parte do código
+        const dadosBase = {
+            paginaAtual: 'pagina1',
+            paginas: {
+                pagina1: {
+                    nome: 'Página 1',
+                    itens: [
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false }
+                    ]
+                },
+                pagina2: {
+                    nome: 'Página 2',
+                    itens: [
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false }
+                    ]
+                },
+                pagina3: {
+                    nome: 'Página 3',
+                    itens: [
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false },
+                        { imagem: '', marcado: false }
+                    ]
+                }
+            }
         };
+
+        // Carrega marcações feitas pelos usuários (não altera as imagens)
+        let dados = JSON.parse(localStorage.getItem('dadosPotGLA')) || dadosBase;
+
+        // Garante que as imagens não sejam alteradas pelos usuários
+        function sincronizarImagens() {
+            for (const idPagina in dados.paginas) {
+                dados.paginas[idPagina].itens.forEach((item, i) => {
+                    item.imagem = dadosBase.paginas[idPagina].itens[i].imagem;
+                });
+            }
+        }
 
         const grade = document.getElementById('grade');
         const nomeAtualEl = document.getElementById('nomeAtual');
 
-        // Criar os itens da grade
-        function criarGrade() {
+        // Renderizar a página
+        function renderizarPagina() {
+            sincronizarImagens();
+            const pag = dados.paginas[dados.paginaAtual];
+            nomeAtualEl.textContent = pag.nome;
+
+            document.querySelectorAll('.nome-box').forEach(btn => btn.classList.remove('ativo'));
+            document.getElementById(`btn-${dados.paginaAtual}`).classList.add('ativo');
+
             grade.innerHTML = '';
-            dados.itens.forEach((item, index) => {
+            pag.itens.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'item-imagem';
                 div.innerHTML = `
-                    <label class="imagem-container" for="img${index}">
-                        ${item.imagem ? `<img src="${item.imagem}" alt="Imagem">` : `<span class="texto-imagem">Clique para adicionar</span>`}
-                        <input type="file" class="input-arquivo" id="img${index}" accept="image/*">
-                    </label>
-                    <div class="caixa-selecao ${item.marcado ? 'selecionado' : ''}" onclick="alternar(${index})">${item.marcado ? '✗' : ''}</div>
+                    <div class="imagem-container">
+                        ${item.imagem ? `<img src="${item.imagem}" alt="Imagem">` : `<span class="texto-imagem">Imagem</span>`}
+                    </div>
+                    <div class="caixa-selecao ${item.marcado ? 'selecionado' : ''}" onclick="alternarMarcacao(${index})">${item.marcado ? '✗' : ''}</div>
                 `;
                 grade.appendChild(div);
-                // Adiciona evento para carregar imagem
-                div.querySelector('input').addEventListener('change', (e) => carregar(e, index));
             });
-            nomeAtualEl.textContent = dados.nomeAtual;
         }
 
-        // Trocar nome
-        function selecionarNome(nome) {
-            dados.nomeAtual = nome;
-            salvar();
-            nomeAtualEl.textContent = nome;
+        // Trocar de página
+        function carregarPagina(nomePagina) {
+            dados.paginaAtual = nomePagina;
+            salvarDados();
+            renderizarPagina();
         }
 
-        // Marcar/desmarcar
-        function alternar(index) {
-            dados.itens[index].marcado = !dados.itens[index].marcado;
-            salvar();
-            criarGrade();
+        // Marcar/desmarcar (apenas isso que o usuário pode fazer)
+        function alternarMarcacao(index) {
+            const pag = dados.paginas[dadosGerais?.paginaAtual || dados.paginaAtual];
+            pag.itens[index].marcado = !pag.itens[index].marcado;
+            salvarDados();
+            renderizarPagina();
         }
 
-        // Carregar imagem
-        function carregar(e, index) {
-            const arquivo = e.target.files[0];
-            if (!arquivo) return;
-            const leitor = new FileReader();
-            leitor.onload = (ev) => {
-                dados.itens[index].imagem = ev.target.result;
-                salvar();
-                criarGrade();
-            };
-            leitor.readAsDataURL(arquivo);
+        // Salva apenas as marcações
+        function salvarDados() {
+            localStorage.setItem('dadosPotGLA', JSON.stringify(dados));
         }
 
-        // Salvar tudo para não perder
-        function salvar() {
-            localStorage.setItem('dadosCadastro', JSON.stringify(dados));
-        }
-
-        // Iniciar a página
-        criarGrade();
+        // Iniciar
+        renderizarPagina();
     </script>
 
 </body>
