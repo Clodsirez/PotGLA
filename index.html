@@ -131,6 +131,70 @@
     color: var(--text);
   }
 
+  .search-bar{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0 auto 18px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    transition: border-color .15s ease;
+  }
+
+  .search-bar:focus-within{
+    border-color: var(--purple-light);
+  }
+
+  .search-bar .search-icon{
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-dim);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  .search-bar input{
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .search-bar input::placeholder{
+    color: var(--text-dim);
+  }
+
+  .search-clear-btn{
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+    flex-shrink: 0;
+  }
+
+  .search-clear-btn:hover{
+    color: var(--text);
+  }
+
+  .no-results{
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+    padding: 30px 10px;
+  }
+
   .page-section{
     background: var(--panel);
     border: 1px solid var(--panel-border);
@@ -557,9 +621,16 @@
   <div class="tabs" id="tabs-navegador"></div>
   <div class="tabs" id="tabs-pagina"></div>
 
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24" class="search-icon"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="search-input" placeholder="Buscar personagem...">
+    <button id="search-clear" class="search-clear-btn" title="Limpar busca" style="display:none;">&times;</button>
+  </div>
+
   <div class="page-section">
     <div class="page-title"><span id="page-title">Página 1</span></div>
     <div class="grid" id="grid"></div>
+    <div class="no-results" id="no-results" style="display:none;">Nenhum personagem encontrado.</div>
   </div>
 
   <div class="save-indicator" id="save-indicator">Salvo ✓</div>
@@ -26936,16 +27007,36 @@ function galleryHtml(urls){
     });
   }
 
+  let searchQuery = '';
+
+  function normalizeText(str){
+    return (str || '')
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
   function renderGrid(){
     const pag = findPagina(currentNavId, currentPagId);
     const pageState = DATA[currentNavId][currentPagId];
     const grid = document.getElementById('grid');
+    const noResultsEl = document.getElementById('no-results');
     document.getElementById('page-title').textContent = pag.name;
     grid.innerHTML = '';
 
     const isBaus = currentNavId === BAUS_NAV_ID;
 
-    pag.items.forEach(item => {
+    const query = normalizeText(searchQuery);
+    const items = query
+      ? pag.items.filter(item => normalizeText(item.name).includes(query))
+      : pag.items;
+
+    noResultsEl.style.display = items.length === 0 ? 'block' : 'none';
+    grid.style.display = items.length === 0 ? 'none' : 'grid';
+
+    items.forEach(item => {
       const isChecked = !!pageState[item.id];
       const thumbContent = item.image
         ? `<img src="${item.image}" alt="${item.name}">`
@@ -26989,6 +27080,23 @@ function galleryHtml(urls){
       grid.appendChild(card);
     });
   }
+
+  const searchInput = document.getElementById('search-input');
+  const searchClearBtn = document.getElementById('search-clear');
+
+  searchInput.addEventListener('input', () => {
+    searchQuery = searchInput.value;
+    searchClearBtn.style.display = searchQuery ? 'block' : 'none';
+    renderGrid();
+  });
+
+  searchClearBtn.addEventListener('click', () => {
+    searchQuery = '';
+    searchInput.value = '';
+    searchClearBtn.style.display = 'none';
+    searchInput.focus();
+    renderGrid();
+  });
 
   renderNavegadorTabs();
   renderPaginaTabs();
