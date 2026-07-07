@@ -131,6 +131,34 @@
     color: var(--text);
   }
 
+  .tab.tab-disabled{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    cursor: not-allowed;
+    opacity: 0.55;
+    color: var(--gold-light);
+    border-color: var(--gold);
+    background: rgba(224,178,58,0.08);
+  }
+
+  .tab.tab-disabled:hover{
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: rgba(224,178,58,0.08);
+  }
+
+  .tab-lock-icon{
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
   .search-row{
     display:flex;
     align-items:center;
@@ -26811,6 +26839,17 @@ function galleryHtml(urls){
 
   const BAUS_NAV_ID = 'nav2';
 
+  /* ========================================================================
+     NAVEGADORES DESATIVADOS — EDITADO SOMENTE PELO DEV
+     ------------------------------------------------------------------------
+     Ids de navegadores ainda incompletos (em edição). Eles aparecem na
+     lista de abas travados, com um ícone e aviso de "em construção", e não
+     podem ser clicados/abertos pelos jogadores. Quando terminar de editar
+     o conteúdo (ex: cadastrar as imagens dos baús), basta remover o id
+     daqui (ex: deixar o array vazio: []) para liberar o acesso normal.
+     ======================================================================== */
+  const DISABLED_NAVS = ['nav2'];
+
   function buildDefaultBaus(){
     const data = {};
     CONFIG.forEach(nav => {
@@ -27027,11 +27066,23 @@ function galleryHtml(urls){
     const container = document.getElementById('tabs-navegador');
     container.innerHTML = '';
     CONFIG.forEach(nav => {
+      const isDisabled = DISABLED_NAVS.includes(nav.id);
       const btn = document.createElement('button');
-      btn.className = 'tab' + (nav.id === currentNavId ? ' active' : '');
-      btn.textContent = nav.name;
+      btn.className = 'tab' + (nav.id === currentNavId ? ' active' : '') + (isDisabled ? ' tab-disabled' : '');
       btn.dataset.navId = nav.id;
+
+      if(isDisabled){
+        btn.title = 'Em construção — conteúdo ainda incompleto';
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" class="tab-lock-icon"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>${nav.name}</span>
+        `;
+      } else {
+        btn.textContent = nav.name;
+      }
+
       btn.addEventListener('click', () => {
+        if(isDisabled) return;
         currentNavId = nav.id;
         currentPagId = findNavegador(nav.id).pages[0].id;
         renderNavegadorTabs();
