@@ -25863,28 +25863,658 @@ const CONFIG = [
 ];
 
 /* ========================================================================
-   IMAGENS DOS BAÚS — EDITADO SOMENTE PELO DEV
+   IMAGENS DOS BAUS — EDITADO SOMENTE PELO DEV
    ------------------------------------------------------------------------
-   Estrutura: CHEST_IMAGES[navId][pagId][itemId] = array com 5 posições
-   (uma por baú), cada posição é { location: [...urls], reward: [...urls] }.
-   Cada array de imagens pode ter de 0 a quantas quiser (ex: 4 a 10).
-   O jogador NUNCA edita isso — só visualiza. Você cola as URLs aqui
-   direto no código e recarrega a página.
+   Estrutura: CHEST_IMAGES[navId][pagId] = array com uma posicao por bau
+   da ILHA (pagina). Cada posicao e { location: [...urls], reward: [...urls] }.
+   Esse mesmo conjunto vale automaticamente para TODOS os personagens
+   daquela ilha (nao precisa configurar personagem por personagem).
+
+   O jogador NUNCA edita isso — so visualiza. Voce cola as URLs aqui
+   direto no codigo (arrays "location" e "reward") e recarrega a pagina.
+   A quantidade de posicoes no array deve bater com o numero definido
+   em CHEST_COUNTS para aquela mesma ilha.
    ======================================================================== */
 const CHEST_IMAGES = {
-  nav2: {
-    pag1: {
-      i1: [
-        { location: ['https://wiki.gla.com.br/images/9/96/Fooshabau02.jpg'], reward: ['https://wiki.gla.com.br/images/c/cd/Fooshacompensa2.jpg'] },
-        { location: ['https://wiki.gla.com.br/images/e/e0/Foosha_bau03.jpg'], reward: ['https://wiki.gla.com.br/images/7/71/Fooshacompensa3.jpg'] },
-        { location: ['https://wiki.gla.com.br/images/3/3e/Foosha_bau04.jpg', 'https://wiki.gla.com.br/images/4/4c/Foosha_bau05.jpg'], reward: ['https://wiki.gla.com.br/images/b/b8/Fooshacompensa4.jpg'] }
-      ]
-    }
+  "nav2": {
+    "pag1": [
+      {
+        "location": [
+          "https://wiki.gla.com.br/images/9/96/Fooshabau02.jpg"
+        ],
+        "reward": [
+          "https://wiki.gla.com.br/images/c/cd/Fooshacompensa2.jpg"
+        ]
+      },
+      {
+        "location": [
+          "https://wiki.gla.com.br/images/e/e0/Foosha_bau03.jpg"
+        ],
+        "reward": [
+          "https://wiki.gla.com.br/images/7/71/Fooshacompensa3.jpg"
+        ]
+      },
+      {
+        "location": [
+          "https://wiki.gla.com.br/images/3/3e/Foosha_bau04.jpg",
+          "https://wiki.gla.com.br/images/4/4c/Foosha_bau05.jpg"
+        ],
+        "reward": [
+          "https://wiki.gla.com.br/images/b/b8/Fooshacompensa4.jpg"
+        ]
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag2": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag3": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag4": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag5": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag6": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag8": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag9": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag10": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag11": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag12": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag13": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag14": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag15": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag16": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag17": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag18": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag19": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag20": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag21": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag22": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag23": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag24": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag25": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag26": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag27": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag28": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ],
+    "pag29": [
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      },
+      {
+        "location": [],
+        "reward": []
+      }
+    ]
   }
 };
 
-function getChestImages(navId, pagId, itemId, idx){
-  const arr = CHEST_IMAGES?.[navId]?.[pagId]?.[itemId];
+function getChestImages(navId, pagId, idx){
+  const arr = CHEST_IMAGES?.[navId]?.[pagId];
   const entry = arr && arr[idx];
   return {
     location: (entry && Array.isArray(entry.location)) ? entry.location : [],
@@ -25902,12 +26532,38 @@ function getChestImages(navId, pagId, itemId, idx){
 const DEFAULT_CHEST_COUNT = 5;
 
 const CHEST_COUNTS = {
-  nav2: {
-    pag1: 5   // Foosha Village
-    // pag2: 3,   // Shells Town — exemplo: essa ilha teria só 3 baús
-    // pag4: 7,   // Orange Town — exemplo: essa ilha teria 7 baús
+  "nav2": {
+    "pag1": 6,
+    "pag2": 6,
+    "pag3": 4,
+    "pag4": 5,
+    "pag5": 5,
+    "pag6": 5,
+    "pag8": 5,
+    "pag9": 5,
+    "pag10": 5,
+    "pag11": 5,
+    "pag12": 5,
+    "pag13": 5,
+    "pag14": 5,
+    "pag15": 5,
+    "pag16": 5,
+    "pag17": 5,
+    "pag18": 5,
+    "pag19": 5,
+    "pag20": 5,
+    "pag21": 5,
+    "pag22": 5,
+    "pag23": 5,
+    "pag24": 5,
+    "pag25": 5,
+    "pag26": 5,
+    "pag27": 5,
+    "pag28": 5,
+    "pag29": 5
   }
-};
+}
+;
 
 function getChestCount(navId, pagId){
   const count = CHEST_COUNTS?.[navId]?.[pagId];
@@ -26077,7 +26733,7 @@ function galleryHtml(urls){
     container.innerHTML = '';
 
     chests.forEach((val, idx) => {
-      const imgs = getChestImages(currentNavId, currentPagId, itemId, idx);
+      const imgs = getChestImages(currentNavId, currentPagId, idx);
 
       const wrap = document.createElement('div');
       wrap.className = 'chest-row-wrap';
