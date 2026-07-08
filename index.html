@@ -117,6 +117,8 @@
     background: rgba(58,142,224,0.2);
   }
 
+
+
   .tabs{
     display:flex;
     flex-wrap: wrap;
@@ -720,7 +722,14 @@
     line-height: 1.5;
   }
 
+  .backup-code-row{
+    display:flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
   .backup-textarea{
+    flex: 1;
     width: 100%;
     min-height: 110px;
     max-height: 220px;
@@ -738,6 +747,39 @@
   .backup-textarea:focus{
     outline: none;
     border-color: var(--purple-light);
+  }
+
+  .reroll-btn{
+    flex-shrink: 0;
+    width: 42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(224,178,58,0.10);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .15s ease, transform .3s ease;
+  }
+
+  .reroll-btn:hover{
+    background: rgba(224,178,58,0.2);
+  }
+
+  .reroll-btn:active svg{
+    transform: rotate(180deg);
+  }
+
+  .reroll-btn svg{
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .3s ease;
   }
 
   .backup-modal-actions{
@@ -795,9 +837,9 @@
       <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
       <span>Resetar tudo</span>
     </button>
-    <button class="reset-all-btn scope-backup" id="backup-btn" title="Gerar um código para recuperar seu progresso depois">
-      <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 21h16"></path></svg>
-      <span>Código de backup</span>
+    <button class="reset-all-btn scope-backup" id="backup-btn" title="Ver seu código de recuperação">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>Meu código</span>
     </button>
     <button class="reset-all-btn scope-restore" id="restore-btn" title="Restaurar progresso a partir de um código">
       <svg viewBox="0 0 24 24"><path d="M12 21V9"></path><path d="M7 14l5-5 5 5"></path><path d="M4 3h16"></path></svg>
@@ -859,13 +901,20 @@
 
   <div class="modal-overlay" id="backup-modal-overlay">
     <div class="backup-modal-box">
-      <div class="backup-modal-title">Seu código de backup</div>
+      <div class="backup-modal-title">Seu código de recuperação</div>
       <div class="backup-modal-text">
-        Copie e guarde esse código em um lugar seguro (bloco de notas, WhatsApp, etc).
-        Se você trocar de navegador ou limpar os dados, cole esse código na opção
-        "Restaurar código" para recuperar tudo o que já marcou.
+        Esse código é gerado automaticamente com o seu progresso atual. Copie e guarde
+        em um lugar seguro (bloco de notas, WhatsApp, etc). Se trocar de navegador ou
+        limpar os dados, cole esse código em "Restaurar código" para recuperar tudo.
+        Não gostou da aparência do código? Clique no dado para gerar uma nova versão dele
+        (sem perder nada do seu progresso).
       </div>
-      <textarea class="backup-textarea" id="backup-code-textarea" readonly onclick="this.select()"></textarea>
+      <div class="backup-code-row">
+        <textarea class="backup-textarea" id="backup-code-textarea" readonly onclick="this.select()"></textarea>
+        <button class="reroll-btn" id="reroll-btn" title="Gerar uma nova aparência para o código">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+        </button>
+      </div>
       <div class="backup-modal-actions">
         <button class="backup-btn-secondary" id="backup-close-btn">Fechar</button>
         <button class="backup-btn-primary" id="backup-copy-btn">Copiar código</button>
@@ -877,7 +926,7 @@
     <div class="backup-modal-box">
       <div class="backup-modal-title">Restaurar por código</div>
       <div class="backup-modal-text">
-        Cole abaixo o código de backup que você salvou antes. Isso vai substituir
+        Cole abaixo o código de recuperação que você salvou antes. Isso vai substituir
         TODAS as marcações atuais deste navegador pelas marcações do código.
       </div>
       <textarea class="backup-textarea" id="restore-code-textarea" placeholder="Cole seu código aqui..."></textarea>
@@ -27207,17 +27256,60 @@ function galleryHtml(urls){
 
 
   /* ========================================================================
-     CÓDIGO DE BACKUP / RESTAURAÇÃO
+     CÓDIGO DE RECUPERAÇÃO (AUTOMÁTICO)
      ------------------------------------------------------------------------
-     Como o site é 100% estático (sem servidor/banco de dados), não existe
-     login de verdade. Em vez disso, geramos um código que contém todo o
-     progresso atual (comprimido + em base64). A pessoa guarda esse código
-     e pode colá-lo depois — no mesmo navegador ou em outro — para recuperar
-     tudo o que já tinha marcado.
+     Como o site é 100% estático (sem servidor/banco de dados), o código
+     carrega o progresso atual comprimido dentro dele — não existe login
+     real. Cada navegador recebe automaticamente um "salt" aleatório (com
+     bastante entropia, pra reduzir ao máximo a chance de duas pessoas
+     tirarem o mesmo código, mesmo trocando via o dado de reroll). O código
+     é sempre calculado na hora a partir do progresso + do salt atual, sem
+     precisar clicar em nenhum botão de "gerar".
      ======================================================================== */
 
+  const SALT_KEY = 'potgla_recovery_salt';
+  const SALT_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem chars ambíguos (0/O, 1/I)
+
+  function generateSalt(){
+    let bytes;
+    try{
+      bytes = new Uint8Array(14);
+      crypto.getRandomValues(bytes);
+    }catch(e){
+      // fallback bem improvável de precisar, mas evita quebrar em navegadores antigos
+      bytes = Array.from({length: 14}, () => Math.floor(Math.random() * 256));
+    }
+    let salt = '';
+    for(let i = 0; i < bytes.length; i++){
+      salt += SALT_ALPHABET[bytes[i] % SALT_ALPHABET.length];
+    }
+    return salt;
+  }
+
+  function getOrCreateSalt(){
+    let salt = null;
+    try{ salt = localStorage.getItem(SALT_KEY); }catch(e){}
+    if(!salt){
+      salt = generateSalt();
+      try{ localStorage.setItem(SALT_KEY, salt); }catch(e){}
+    }
+    return salt;
+  }
+
+  let currentSalt = getOrCreateSalt();
+
+  function rerollSalt(){
+    let novoSalt = generateSalt();
+    while(novoSalt === currentSalt){
+      novoSalt = generateSalt();
+    }
+    currentSalt = novoSalt;
+    try{ localStorage.setItem(SALT_KEY, currentSalt); }catch(e){}
+    return currentSalt;
+  }
+
   async function generateRecoveryCode(){
-    const payload = { v: 1, data: DATA, baus: DATA_BAUS };
+    const payload = { v: 1, id: currentSalt, data: DATA, baus: DATA_BAUS };
     const json = JSON.stringify(payload);
     const bytes = new TextEncoder().encode(json);
     const cs = new CompressionStream('gzip');
@@ -27285,16 +27377,26 @@ function galleryHtml(urls){
   const restoreCodeTextarea = document.getElementById('restore-code-textarea');
   const restoreErrorEl = document.getElementById('restore-error');
 
-  document.getElementById('backup-btn').addEventListener('click', async () => {
+  async function refreshBackupCodeDisplay(){
     try{
       const code = await generateRecoveryCode();
       backupCodeTextarea.value = code;
-      backupModalOverlay.classList.add('show');
-      backupCodeTextarea.select();
     }catch(e){
-      console.warn('Não foi possível gerar o código de backup:', e);
-      alert('Não foi possível gerar o código de backup. Tente atualizar seu navegador para a versão mais recente.');
+      console.warn('Não foi possível gerar o código de recuperação:', e);
+      backupCodeTextarea.value = '';
+      alert('Não foi possível gerar o código. Tente atualizar seu navegador para a versão mais recente.');
     }
+  }
+
+  document.getElementById('backup-btn').addEventListener('click', async () => {
+    backupModalOverlay.classList.add('show');
+    await refreshBackupCodeDisplay();
+  });
+
+  document.getElementById('reroll-btn').addEventListener('click', async () => {
+    rerollSalt();
+    await refreshBackupCodeDisplay();
+    backupCodeTextarea.select();
   });
 
   document.getElementById('backup-close-btn').addEventListener('click', () => {
@@ -27355,6 +27457,10 @@ function galleryHtml(urls){
     try{
       const payload = await decodeRecoveryCode(code);
       applyExternalState(payload.data, payload.baus);
+      if(payload.id){
+        currentSalt = payload.id;
+        try{ localStorage.setItem(SALT_KEY, currentSalt); }catch(e){}
+      }
       saveState();
       saveBaus();
       restoreModalOverlay.classList.remove('show');
