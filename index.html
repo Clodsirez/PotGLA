@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>PotGLA</title>
 <style>
   :root{
@@ -934,6 +937,20 @@
       <div class="backup-modal-actions">
         <button class="backup-btn-secondary" id="restore-cancel-btn">Cancelar</button>
         <button class="backup-btn-primary" id="restore-confirm-btn">Restaurar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="restore-final-confirm-overlay">
+    <div class="reset-modal-box">
+      <div class="reset-modal-title">Confirmar restauração?</div>
+      <div class="reset-modal-text">
+        Isso vai substituir TODAS as marcações atuais deste navegador pelas
+        marcações do código colado. Essa ação não pode ser desfeita.
+      </div>
+      <div class="reset-modal-actions">
+        <button class="reset-btn-cancel" id="restore-final-cancel-btn">Cancelar</button>
+        <button class="reset-btn-confirm" id="restore-final-confirm-btn">Sim, restaurar</button>
       </div>
     </div>
   </div>
@@ -27441,7 +27458,9 @@ function galleryHtml(urls){
     if(e.target.id === 'restore-modal-overlay') restoreModalOverlay.classList.remove('show');
   });
 
-  document.getElementById('restore-confirm-btn').addEventListener('click', async () => {
+  const restoreFinalConfirmOverlay = document.getElementById('restore-final-confirm-overlay');
+
+  document.getElementById('restore-confirm-btn').addEventListener('click', () => {
     const code = restoreCodeTextarea.value.trim();
     restoreErrorEl.style.display = 'none';
 
@@ -27451,11 +27470,27 @@ function galleryHtml(urls){
       return;
     }
 
-    const confirmed = confirm('Isso vai substituir TODAS as marcações atuais deste navegador pelas marcações do código. Essa ação não pode ser desfeita. Continuar?');
-    if(!confirmed) return;
+    // Em vez do confirm() nativo (que pode ser bloqueado/ignorado
+    // silenciosamente em navegadores embutidos de apps como WhatsApp/
+    // Instagram/Telegram), abrimos um modal próprio.
+    restoreFinalConfirmOverlay.classList.add('show');
+  });
+
+  document.getElementById('restore-final-cancel-btn').addEventListener('click', () => {
+    restoreFinalConfirmOverlay.classList.remove('show');
+  });
+
+  restoreFinalConfirmOverlay.addEventListener('click', (e) => {
+    if(e.target.id === 'restore-final-confirm-overlay') restoreFinalConfirmOverlay.classList.remove('show');
+  });
+
+  document.getElementById('restore-final-confirm-btn').addEventListener('click', async () => {
+    const code = restoreCodeTextarea.value.trim();
+    restoreFinalConfirmOverlay.classList.remove('show');
 
     try{
       const payload = await decodeRecoveryCode(code);
+      const matchInfo = countMatchingKeys(payload.data);
       applyExternalState(payload.data, payload.baus);
       if(payload.id){
         currentSalt = payload.id;
@@ -27468,12 +27503,37 @@ function galleryHtml(urls){
       renderPaginaTabs();
       renderGrid();
       showSaved();
+
+      // Se o código foi lido com sucesso mas quase nada bateu com o
+      // CONFIG atual, é sinal forte de que este navegador está com uma
+      // versão em cache (antiga) da página. Avisa o jogador.
+      if(matchInfo.total > 0 && matchInfo.matched === 0){
+        alert('O código foi lido, mas nenhuma marcação bateu com esta página. Isso costuma acontecer quando o navegador está com uma versão antiga salva em cache. Tente atualizar a página com Ctrl+Shift+R (ou limpar o cache) e restaurar o código de novo.');
+      }
     }catch(e){
       console.warn('Falha ao restaurar código:', e);
-      restoreErrorEl.textContent = 'Código inválido, incompleto ou corrompido. Verifique se copiou tudo certinho e tente de novo.';
       restoreErrorEl.style.display = 'block';
+      restoreErrorEl.textContent = 'Código inválido, incompleto ou corrompido. Verifique se copiou tudo certinho e tente de novo.';
+      restoreModalOverlay.classList.add('show');
     }
   });
+
+  // Conta quantas chaves do código batem com os ids atuais do CONFIG,
+  // pra detectar caso de cache desatualizado (ver aviso acima).
+  function countMatchingKeys(savedData){
+    let total = 0, matched = 0;
+    CONFIG.forEach(nav => {
+      nav.pages.forEach(pag => {
+        pag.items.forEach(item => {
+          total++;
+          if(savedData[nav.id] && savedData[nav.id][pag.id] && (item.id in savedData[nav.id][pag.id])){
+            matched++;
+          }
+        });
+      });
+    });
+    return { total, matched };
+  }
 
   function renderNavegadorTabs(){
     const container = document.getElementById('tabs-navegador');
