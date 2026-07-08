@@ -19,6 +19,10 @@
     --gold-light: #f3cf6d;
     --danger: #e5484d;
     --danger-light: #ff6a6f;
+    --teal: #2fbf9f;
+    --teal-light: #4fe3c2;
+    --blue: #3a8ee0;
+    --blue-light: #6bb0f5;
   }
 
   *{ box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,6 +97,24 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  .reset-all-btn.scope-backup{
+    background: rgba(47,191,159,0.10);
+    border-color: var(--teal);
+    color: var(--teal-light);
+  }
+  .reset-all-btn.scope-backup:hover{
+    background: rgba(47,191,159,0.2);
+  }
+
+  .reset-all-btn.scope-restore{
+    background: rgba(58,142,224,0.10);
+    border-color: var(--blue);
+    color: var(--blue-light);
+  }
+  .reset-all-btn.scope-restore:hover{
+    background: rgba(58,142,224,0.2);
   }
 
   .tabs{
@@ -673,6 +695,88 @@
   }
 
   .reset-btn-confirm:hover{ background: var(--danger-light); }
+
+  .backup-modal-box{
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 24px;
+    width: min(480px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .backup-modal-title{
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .backup-modal-text{
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .backup-textarea{
+    width: 100%;
+    min-height: 110px;
+    max-height: 220px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .backup-textarea:focus{
+    outline: none;
+    border-color: var(--purple-light);
+  }
+
+  .backup-modal-actions{
+    display:flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .backup-btn-secondary{
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .backup-btn-primary{
+    background: var(--purple);
+    border: 1px solid var(--purple);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .backup-btn-primary:hover{ background: var(--purple-light); }
+
+  .backup-error-text{
+    display:none;
+    font-size: 12.5px;
+    color: var(--danger-light);
+    line-height: 1.4;
+  }
 </style>
 </head>
 <body>
@@ -690,6 +794,14 @@
     <button class="reset-all-btn scope-all" id="reset-all-btn" title="Resetar todas as marcações">
       <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
       <span>Resetar tudo</span>
+    </button>
+    <button class="reset-all-btn scope-backup" id="backup-btn" title="Gerar um código para recuperar seu progresso depois">
+      <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 21h16"></path></svg>
+      <span>Código de backup</span>
+    </button>
+    <button class="reset-all-btn scope-restore" id="restore-btn" title="Restaurar progresso a partir de um código">
+      <svg viewBox="0 0 24 24"><path d="M12 21V9"></path><path d="M7 14l5-5 5 5"></path><path d="M4 3h16"></path></svg>
+      <span>Restaurar código</span>
     </button>
   </div>
 
@@ -741,6 +853,38 @@
       <div class="reset-modal-actions">
         <button class="reset-btn-cancel" id="reset-cancel-btn">Cancelar</button>
         <button class="reset-btn-confirm" id="reset-confirm-btn">Sim, resetar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="backup-modal-overlay">
+    <div class="backup-modal-box">
+      <div class="backup-modal-title">Seu código de backup</div>
+      <div class="backup-modal-text">
+        Copie e guarde esse código em um lugar seguro (bloco de notas, WhatsApp, etc).
+        Se você trocar de navegador ou limpar os dados, cole esse código na opção
+        "Restaurar código" para recuperar tudo o que já marcou.
+      </div>
+      <textarea class="backup-textarea" id="backup-code-textarea" readonly onclick="this.select()"></textarea>
+      <div class="backup-modal-actions">
+        <button class="backup-btn-secondary" id="backup-close-btn">Fechar</button>
+        <button class="backup-btn-primary" id="backup-copy-btn">Copiar código</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="restore-modal-overlay">
+    <div class="backup-modal-box">
+      <div class="backup-modal-title">Restaurar por código</div>
+      <div class="backup-modal-text">
+        Cole abaixo o código de backup que você salvou antes. Isso vai substituir
+        TODAS as marcações atuais deste navegador pelas marcações do código.
+      </div>
+      <textarea class="backup-textarea" id="restore-code-textarea" placeholder="Cole seu código aqui..."></textarea>
+      <div class="backup-error-text" id="restore-error"></div>
+      <div class="backup-modal-actions">
+        <button class="backup-btn-secondary" id="restore-cancel-btn">Cancelar</button>
+        <button class="backup-btn-primary" id="restore-confirm-btn">Restaurar</button>
       </div>
     </div>
   </div>
@@ -26775,7 +26919,7 @@ function galleryHtml(urls){
       nav.pages.forEach(pag => {
         data[nav.id][pag.id] = {};
         pag.items.forEach((item, i) => {
-          data[nav.id][pag.id][item.id] = (i % 3 === 1);
+          data[nav.id][pag.id][item.id] = false;
         });
       });
     });
@@ -27061,6 +27205,169 @@ function galleryHtml(urls){
     if(e.target.id === 'reset-modal-overlay') closeResetModal();
   });
 
+
+  /* ========================================================================
+     CÓDIGO DE BACKUP / RESTAURAÇÃO
+     ------------------------------------------------------------------------
+     Como o site é 100% estático (sem servidor/banco de dados), não existe
+     login de verdade. Em vez disso, geramos um código que contém todo o
+     progresso atual (comprimido + em base64). A pessoa guarda esse código
+     e pode colá-lo depois — no mesmo navegador ou em outro — para recuperar
+     tudo o que já tinha marcado.
+     ======================================================================== */
+
+  async function generateRecoveryCode(){
+    const payload = { v: 1, data: DATA, baus: DATA_BAUS };
+    const json = JSON.stringify(payload);
+    const bytes = new TextEncoder().encode(json);
+    const cs = new CompressionStream('gzip');
+    const compressedStream = new Blob([bytes]).stream().pipeThrough(cs);
+    const compressedBytes = new Uint8Array(await new Response(compressedStream).arrayBuffer());
+    let binary = '';
+    for(let i = 0; i < compressedBytes.length; i++){
+      binary += String.fromCharCode(compressedBytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  async function decodeRecoveryCode(code){
+    const clean = code.replace(/\s+/g, '');
+    const binary = atob(clean);
+    const bytes = new Uint8Array(binary.length);
+    for(let i = 0; i < binary.length; i++){
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const ds = new DecompressionStream('gzip');
+    const decompressedStream = new Blob([bytes]).stream().pipeThrough(ds);
+    const decompressedBytes = new Uint8Array(await new Response(decompressedStream).arrayBuffer());
+    const json = new TextDecoder().decode(decompressedBytes);
+    const payload = JSON.parse(json);
+    if(!payload || payload.v !== 1 || !payload.data || !payload.baus){
+      throw new Error('Formato de código inválido');
+    }
+    return payload;
+  }
+
+  // Aplica um estado externo (vindo de um código) reconciliando com a
+  // estrutura atual do CONFIG — igual ao loadState()/loadBaus(), assim
+  // itens novos/removidos desde que o código foi gerado não quebram nada.
+  function applyExternalState(savedData, savedBaus){
+    const freshData = buildDefaultData();
+    const freshBaus = buildDefaultBaus();
+
+    CONFIG.forEach(nav => {
+      nav.pages.forEach(pag => {
+        pag.items.forEach(item => {
+          if(savedData[nav.id] && savedData[nav.id][pag.id] && (item.id in savedData[nav.id][pag.id])){
+            freshData[nav.id][pag.id][item.id] = !!savedData[nav.id][pag.id][item.id];
+          }
+        });
+
+        if(nav.id === BAUS_NAV_ID){
+          const count = getChestCount(nav.id, pag.id);
+          pag.items.forEach(item => {
+            const savedArr = savedBaus[nav.id] && savedBaus[nav.id][pag.id] && savedBaus[nav.id][pag.id][item.id];
+            if(Array.isArray(savedArr)){
+              freshBaus[nav.id][pag.id][item.id] = Array(count).fill(false).map((_, i) => !!savedArr[i]);
+            }
+          });
+        }
+      });
+    });
+
+    Object.assign(DATA, freshData);
+    Object.assign(DATA_BAUS, freshBaus);
+  }
+
+  const backupModalOverlay = document.getElementById('backup-modal-overlay');
+  const backupCodeTextarea = document.getElementById('backup-code-textarea');
+  const restoreModalOverlay = document.getElementById('restore-modal-overlay');
+  const restoreCodeTextarea = document.getElementById('restore-code-textarea');
+  const restoreErrorEl = document.getElementById('restore-error');
+
+  document.getElementById('backup-btn').addEventListener('click', async () => {
+    try{
+      const code = await generateRecoveryCode();
+      backupCodeTextarea.value = code;
+      backupModalOverlay.classList.add('show');
+      backupCodeTextarea.select();
+    }catch(e){
+      console.warn('Não foi possível gerar o código de backup:', e);
+      alert('Não foi possível gerar o código de backup. Tente atualizar seu navegador para a versão mais recente.');
+    }
+  });
+
+  document.getElementById('backup-close-btn').addEventListener('click', () => {
+    backupModalOverlay.classList.remove('show');
+  });
+
+  backupModalOverlay.addEventListener('click', (e) => {
+    if(e.target.id === 'backup-modal-overlay') backupModalOverlay.classList.remove('show');
+  });
+
+  document.getElementById('backup-copy-btn').addEventListener('click', () => {
+    const btn = document.getElementById('backup-copy-btn');
+    const original = btn.textContent;
+    backupCodeTextarea.select();
+    const finish = (ok) => {
+      btn.textContent = ok ? 'Copiado!' : 'Erro ao copiar';
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(backupCodeTextarea.value).then(() => finish(true)).catch(() => finish(false));
+    } else {
+      try{
+        document.execCommand('copy');
+        finish(true);
+      }catch(e){
+        finish(false);
+      }
+    }
+  });
+
+  document.getElementById('restore-btn').addEventListener('click', () => {
+    restoreCodeTextarea.value = '';
+    restoreErrorEl.style.display = 'none';
+    restoreModalOverlay.classList.add('show');
+  });
+
+  document.getElementById('restore-cancel-btn').addEventListener('click', () => {
+    restoreModalOverlay.classList.remove('show');
+  });
+
+  restoreModalOverlay.addEventListener('click', (e) => {
+    if(e.target.id === 'restore-modal-overlay') restoreModalOverlay.classList.remove('show');
+  });
+
+  document.getElementById('restore-confirm-btn').addEventListener('click', async () => {
+    const code = restoreCodeTextarea.value.trim();
+    restoreErrorEl.style.display = 'none';
+
+    if(!code){
+      restoreErrorEl.textContent = 'Cole um código antes de restaurar.';
+      restoreErrorEl.style.display = 'block';
+      return;
+    }
+
+    const confirmed = confirm('Isso vai substituir TODAS as marcações atuais deste navegador pelas marcações do código. Essa ação não pode ser desfeita. Continuar?');
+    if(!confirmed) return;
+
+    try{
+      const payload = await decodeRecoveryCode(code);
+      applyExternalState(payload.data, payload.baus);
+      saveState();
+      saveBaus();
+      restoreModalOverlay.classList.remove('show');
+      renderNavegadorTabs();
+      renderPaginaTabs();
+      renderGrid();
+      showSaved();
+    }catch(e){
+      console.warn('Falha ao restaurar código:', e);
+      restoreErrorEl.textContent = 'Código inválido, incompleto ou corrompido. Verifique se copiou tudo certinho e tente de novo.';
+      restoreErrorEl.style.display = 'block';
+    }
+  });
 
   function renderNavegadorTabs(){
     const container = document.getElementById('tabs-navegador');
